@@ -118,28 +118,46 @@ Each phase builds on the previous and results in a testable increment.
 - Current painting data (Painting resource)
 - Array of Cell data (cells: Array[Cell])
 - Grid dimensions (grid_size: Vector2i)
-- Methods: load_painting(painting: Painting), get_cell_at(pos: Vector2i), is_cell_painted(pos: Vector2i)
+- Painted cell count tracking (painted_count: int)
+- Methods: load_painting(painting: Painting, painted_cells: Array[Vector2i] = []), get_cell_at(pos: Vector2i), is_cell_painted(pos: Vector2i)
 - Method: get_unpainted_cell_positions() -> Array[Vector2i]
 - Method: get_painted_cell_positions() -> Array[Vector2i] (for save system)
+- Method: get_painted_count() -> int
+- Method: get_total_count() -> int
+- Method: get_current_painting() -> Painting
+- Method: mark_cell_painted(position: Vector2i) (called by slimes, emits signal, tracks completion)
 - Method: restore_painted_cells(positions: Array[Vector2i]) (for load system)
 - Signal: cell_painted(position: Vector2i, color: Color)
 - Signal: painting_complete()
+- Signal: painting_loaded(painting: Painting)
 
 **Steps:**
 1. Create GridManager class as Node
 2. Define properties and signals
-3. Implement load_painting() to initialize cells array
-4. Implement helper methods for cell access
-5. Add to project autoload settings
-6. Test: Load test painting, query cells, verify data correct
+3. Implement load_painting(painting: Painting, painted_cells: Array[Vector2i] = []):
+   - Store painting reference
+   - Create cells array from painting
+   - If painted_cells provided, call restore_painted_cells()
+   - Emit painting_loaded signal
+4. Implement mark_cell_painted(position: Vector2i):
+   - Get cell at position and mark as painted
+   - Increment painted_count
+   - Emit cell_painted signal with position and color
+   - Check if painted_count == total cells, emit painting_complete if done
+5. Implement helper methods for cell access and querying
+6. Add to project autoload settings
+7. Test: Load test painting, query cells, mark cells painted, verify signals emit
 
 **Testing Approach:**
 - Create manual test scene
 - Get GridManager singleton reference
 - Load test painting
 - Call get_unpainted_cell_positions() and verify returns all positions
-- Mark a few cells as painted manually
+- Call mark_cell_painted() for a few positions
+- Verify cell_painted signal emits with correct color
 - Call get_unpainted_cell_positions() again, verify count decreased
+- Verify get_painted_count() returns correct count
+- Mark all remaining cells, verify painting_complete signal emits
 
 ---
 
@@ -158,6 +176,7 @@ Each phase builds on the previous and results in a testable increment.
 - Image resource for grid pixel data
 - ImageTexture to display the Image on Sprite2D
 - Cell size: 32x32 pixels for MVP (configurable scale factor)
+- Method: cell_to_world(cell_pos: Vector2i) -> Vector2 (converts grid position to world coordinates)
 - Optional: Custom _draw() overlay for grid borders
 
 **Architecture Decision - Why Image Texture:**
@@ -171,18 +190,25 @@ Each phase builds on the previous and results in a testable increment.
 2. Add Sprite2D as child
 3. Attach script to root
 4. In _ready():
-   - Get GridManager reference and connect to cell_painted signal
-   - Create Image with dimensions matching grid_size
+   - Get GridManager reference
+   - Connect to cell_painted signal
+   - Connect to painting_loaded signal
+   - Create initial grid for current painting (if any)
+5. Implement _on_painting_loaded(painting: Painting):
+   - Create new Image with dimensions matching painting grid_size
    - Fill Image with white color initially
    - Create ImageTexture from Image
    - Assign texture to Sprite2D
    - Set Sprite2D scale to make cells visible (e.g., scale = Vector2(32, 32) for 32x32 pixel cells)
    - Center the sprite appropriately
-5. Implement _on_cell_painted(pos: Vector2i, color: Color):
+6. Implement _on_cell_painted(pos: Vector2i, color: Color):
    - Call image.set_pixelv(pos, color)
    - Call texture.update(image) to refresh the displayed texture
-6. Optional: Override _draw() to render grid borders (draw lines between cells)
-7. Test: Load test painting in GridManager, verify grid renders white cells
+7. Implement cell_to_world(cell_pos: Vector2i) -> Vector2:
+   - Calculate world position from cell position using sprite position and scale
+   - Used by particle effects and UI elements
+8. Optional: Override _draw() to render grid borders (draw lines between cells)
+9. Test: Load test painting in GridManager, verify grid renders white cells
 
 **Implementation Notes:**
 - Use Image.FORMAT_RGBA8 for the image format
@@ -215,6 +241,8 @@ Each phase builds on the previous and results in a testable increment.
 - Zoom limits: min (entire grid fits), max (cell detail visible)
 - Smooth interpolation for camera movement
 - Method: follow_position(pos: Vector2) for slime following
+- Method: zoom_to_show_full_grid() for completion sequence
+- Method: zoom_to(target_pos: Vector2, target_zoom: float) for animated transitions
 
 **Steps:**
 1. Add Camera2D to grid_renderer scene
@@ -250,13 +278,16 @@ Each phase builds on the previous and results in a testable increment.
 - Method: add_coins(amount: int)
 - Method: spend_coins(amount: int) -> bool (returns false if can't afford)
 - Method: can_afford(amount: int) -> bool
+- Method: get_coins() -> int (for save system)
+- Method: set_coins(amount: int) (for load system)
 
 **Steps:**
 1. Create EconomyManager class as Node
 2. Define properties and signals
 3. Implement methods with validation
-4. Add to autoload
-5. Test: Add/spend coins, verify signals emit, verify can't spend more than owned
+4. In _ready(), connect to GridManager.cell_painted signal to add 1 coin per cell
+5. Add to autoload
+6. Test: Add/spend coins, verify signals emit, verify can't spend more than owned
 
 **Testing Approach:**
 - Get EconomyManager reference

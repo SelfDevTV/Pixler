@@ -7,6 +7,8 @@ extends Resource
 @export var required_tools: Array[String]
 @export var unlocks_tool: String
 
+@export var debug_all_painted: bool = false
+
 
 @export_range(0, 20, 2, "suffix:x") var shrink_factor: float = 0
 
@@ -43,14 +45,16 @@ func create_cells() -> Array[Cell]:
     var height = img.get_height()
     
     if shrink_factor > 0:
-        for y in range(0, height, shrink_factor):
-            for x in range(0, width, shrink_factor):
-                var index = (y / shrink_factor) * grid_size.x + (x / shrink_factor)
-                var col = img.get_pixel(x, y)
+        for y in range(grid_size.y):
+            for x in range(grid_size.x):
+                var index = y * grid_size.x + x
+                var pixel_x = x * int(shrink_factor)
+                var pixel_y = y * int(shrink_factor)
+                var col = img.get_pixel(pixel_x, pixel_y)
                 var cell = Cell.new()
                 cell.color = col
-                #cell.is_painted = true
-                cell.position = Vector2i(floor(x / shrink_factor), floor(y / shrink_factor))
+                cell.is_painted = debug_all_painted
+                cell.position = Vector2i(x, y)
                 cells[index] = cell
     else:
         for y in range(height):

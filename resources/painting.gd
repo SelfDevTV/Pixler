@@ -39,6 +39,7 @@ func create_cells() -> Array[Cell]:
             var cell = Cell.new()
             cell.color = col
             cell.position = Vector2i(x, y)
+            cell.is_painted = true
             cells[index] = cell
     return cells
     

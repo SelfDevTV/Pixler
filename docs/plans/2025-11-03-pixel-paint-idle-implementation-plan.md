@@ -4,7 +4,7 @@
 
 **Goal:** Build an MVP idle game where autonomous slime workers paint pixel art grids, revealing hidden images while earning coins for progression.
 
-**Architecture:** Scene-based Godot structure with autoloaded singletons for game state, economy, and save/load. Grid system manages cell data and rendering. Slime AI uses state machine pattern. Signal-based communication between systems.
+**Architecture:** Scene-based Godot structure with autoloaded singletons for game state, economy, and save/load. Grid system manages cell data and rendering. Slime AI uses state machine pattern. Signal-based communication between systems. Painting resources use Texture2D for better editor integration and resource management.
 
 **Tech Stack:** Godot 4.x, GDScript, Image texture manipulation for grid rendering, State Machine for slime AI, ResourceSaver/ResourceLoader for persistence.
 
@@ -84,24 +84,26 @@ Each phase builds on the previous and results in a testable increment.
 - `res://resources/painting.gd`
 
 **What This Resource Needs:**
-- Properties: painting_name (String), grid_size (Vector2i), image_path (String)
+- Properties: painting_name (String), grid_size (Vector2i), image_texture (Texture2D)
 - Properties: required_tools (Array[String]), unlocks_tool (String)
-- Method to load image and extract color data
+- Method to load image from texture and extract color data
 - Method to create Cell array from image
 
 **Steps:**
 1. Create Painting resource class extending Resource
 2. Define all properties
-3. Implement method to load PNG from image_path using Image.load()
+3. Implement method to get Image from image_texture using texture.get_image()
 4. Implement method to iterate pixels and create Cell array with colors
-5. Test: Create test painting resource pointing to a simple 10x10 PNG
+5. Auto-calculate grid_size from image dimensions
+6. Test: Create test painting resource with a simple texture assigned
 
 **Testing Approach:**
-- Create a 10x10 pixel art PNG manually
-- Create Painting resource pointing to it
+- Create a 10x10 pixel art PNG manually and import to project
+- Create Painting resource and assign texture in inspector
 - Call the color extraction method
 - Verify correct number of cells created (100)
 - Verify colors match source image pixels
+- Verify grid_size auto-calculated correctly
 
 ---
 
@@ -636,7 +638,7 @@ Each phase builds on the previous and results in a testable increment.
 **What SaveData Resource Needs:**
 - Properties: coins (int), slime_count (int), upgrade_levels (Dictionary)
 - Properties: owned_tools (Array[String]), completed_paintings (Array[String])
-- Properties: current_painting_id (String), cells_painted_in_current (int)
+- Properties: current_painting_name (String), cells_painted_in_current (int)
 - Property: last_save_timestamp (int)
 
 **What SaveManager Needs:**
@@ -1162,11 +1164,11 @@ Each phase builds on the previous and results in a testable increment.
 
 **Steps:**
 1. Find or create 5 pixel art images (free sources: OpenGameArt, itch.io)
-2. Import into project
+2. Import into project as Texture2D resources
 3. Create Painting resource for each:
    - Set painting_name
-   - Set grid_size
-   - Set image_path
+   - Assign image_texture in inspector (drag and drop PNG)
+   - grid_size will auto-calculate from texture dimensions
    - Set required_tools (empty for first 3, future use)
    - Set unlocks_tool (empty for MVP)
 4. Register paintings with GalleryManager
@@ -1298,6 +1300,16 @@ After each phase, verify:
 ---
 
 ## Godot-Specific Notes
+
+### Painting Resource Design Choice
+
+**Why Texture2D instead of String path:**
+- **Inspector Preview:** Texture shows visual preview in Godot inspector, making it easy to see which image is assigned
+- **Resource Management:** Godot handles loading/unloading automatically, preventing resource leaks
+- **Type Safety:** Export variable enforces Texture2D type, preventing invalid file paths
+- **Drag & Drop:** Easy assignment in editor by dragging PNG files directly to property
+- **No Path Issues:** Eliminates runtime errors from incorrect file paths or missing files
+- **Grid Size Auto-Calc:** Can extract dimensions directly from texture without manual entry
 
 ### Recommended Node Structure
 

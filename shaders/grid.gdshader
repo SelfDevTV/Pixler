@@ -10,6 +10,7 @@ uniform vec4 grid_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
 uniform sampler2D painted_cells_texture;
 uniform vec2 grid_size = vec2(32.0, 32.0);
 
+
 void fragment() {
 	// Calculate world position by adding camera offset to fragment coordinates
 	vec2 world_pos = FRAGCOORD.xy + camera_offset;
@@ -28,6 +29,9 @@ void fragment() {
 
 	// Calculate distance to nearest grid line using fract and fwidth for anti-aliasing
 	vec2 grid = abs(fract(grid_pos - 0.5) - 0.5) / fwidth(grid_pos);
+    
+    // Calculate painting dimensions in pixels
+    vec2 painting_size = grid_size * cell_size;
 
 	// Get minimum distance (closest grid line in either x or y direction)
 	float line = min(grid.x, grid.y);
@@ -40,6 +44,14 @@ void fragment() {
 		alpha = 0.0;
 	}
 
-	// Output the grid line color with calculated alpha
-	COLOR = vec4(grid_color.rgb, alpha * grid_color.a);
+    // Check if we're within the painting bounds
+    if (world_pos.x < 0.0 || world_pos.y < 0.0 || 
+        world_pos.x >= painting_size.x || world_pos.y >= painting_size.y) {
+        COLOR = vec4(0.0); // Transparent outside bounds
+
+    } else {
+        // Output the grid line color with calculated alpha
+	   COLOR = vec4(grid_color.rgb, alpha * grid_color.a);
+    }
+	
 }

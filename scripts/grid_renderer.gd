@@ -4,7 +4,7 @@ extends Node2D
 @onready var sprite_2d: Sprite2D = %Sprite2D
 @onready var grid_shader_rect: ColorRect = %GridShaderRect
 
-@export var cell_scale: int = 12
+@export var cell_scale: int = 4
 
 var image: Image
 var image_texture: Texture2D
@@ -47,8 +47,10 @@ func _on_cell_painted(pos: Vector2i, color: Color):
 func _on_painting_loaded(_painting: Painting):
     image = Image.create_empty(GridManager.grid_size.x, GridManager.grid_size.y, false, Image.FORMAT_RGBA8)
     image.fill(Color.TRANSPARENT)
-    for c in GridManager.cells:
-        image.set_pixelv(c.position, c.color)
+    for p in GridManager.get_painted_cell_positions():
+            var c = GridManager.get_cell_at(p)
+            image.set_pixelv(c.position, c.color)
+            
     image_texture = ImageTexture.create_from_image(image)
     sprite_2d.texture = image_texture
     sprite_2d.scale = Vector2(cell_scale, cell_scale)

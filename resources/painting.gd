@@ -7,7 +7,8 @@ extends Resource
 @export var required_tools: Array[String]
 @export var unlocks_tool: String
 
-@export_range(0, 20, 2) var shrink_factor: float = 0
+
+@export_range(0, 20, 2, "suffix:x") var shrink_factor: float = 0
 
 
 

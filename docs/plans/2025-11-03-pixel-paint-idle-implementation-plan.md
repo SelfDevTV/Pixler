@@ -120,6 +120,8 @@ Each phase builds on the previous and results in a testable increment.
 - Grid dimensions (grid_size: Vector2i)
 - Methods: load_painting(painting: Painting), get_cell_at(pos: Vector2i), is_cell_painted(pos: Vector2i)
 - Method: get_unpainted_cells() -> Array[Vector2i]
+- Method: get_painted_cells() -> Array[Vector2i] (for save system)
+- Method: restore_painted_cells(positions: Array[Vector2i]) (for load system)
 - Signal: cell_painted(position: Vector2i, color: Color)
 - Signal: painting_complete()
 
@@ -605,14 +607,15 @@ Each phase builds on the previous and results in a testable increment.
 - When all cells painted, emit painting_complete signal
 
 **Steps:**
-1. Add method load_painting(painting: Painting) to GridManager
+1. Add method load_painting(painting: Painting, painted_cells: Array[Vector2i] = []) to GridManager
 2. Clear existing cells array
 3. Load new painting and create cells
-4. Emit painting_loaded signal
-5. GridRenderer listens to painting_loaded and recreates Image/ImageTexture with new dimensions
-6. SlimeManager listens to painting_loaded and resets slimes to Idle
-7. Track painted cell count, emit painting_complete when all cells done
-8. Test: Switch between paintings, verify grid updates and slimes continue working
+4. If painted_cells provided, call restore_painted_cells(painted_cells) to restore progress
+5. Emit painting_loaded signal
+6. GridRenderer listens to painting_loaded and recreates Image/ImageTexture with new dimensions
+7. SlimeManager listens to painting_loaded and resets slimes to Idle
+8. Track painted cell count, emit painting_complete when all cells done
+9. Test: Switch between paintings, verify grid updates and slimes continue working
 
 **Testing Approach:**
 - Start with Painting A loaded
@@ -638,8 +641,15 @@ Each phase builds on the previous and results in a testable increment.
 **What SaveData Resource Needs:**
 - Properties: coins (int), slime_count (int), upgrade_levels (Dictionary)
 - Properties: owned_tools (Array[String]), completed_paintings (Array[String])
-- Properties: current_painting_name (String), cells_painted_in_current (int)
+- Properties: current_painting_name (String)
+- Properties: painting_progress (Dictionary) - maps painting_name (String) to painted_cells (Array[Vector2i])
 - Property: last_save_timestamp (int)
+
+**Notes on painting_progress:**
+- Key: painting_name (String)
+- Value: Array of painted cell positions (Array[Vector2i]) or PackedVector2Array for efficiency
+- Allows restoration of exact visual progress for any painting
+- On load: GridManager marks cells at these positions as painted
 
 **What SaveManager Needs:**
 - Method: save_game() -> void
@@ -654,6 +664,8 @@ Each phase builds on the previous and results in a testable increment.
 3. Implement save_game():
    - Create SaveData instance
    - Populate from EconomyManager, UpgradeManager, GalleryManager, etc.
+   - Get painted cells from GridManager for current painting
+   - Store in painting_progress Dictionary with current_painting_name as key
    - Use ResourceSaver.save()
 4. Implement load_game():
    - Use ResourceLoader.load()
@@ -664,6 +676,7 @@ Each phase builds on the previous and results in a testable increment.
 
 **Testing Approach:**
 - Play game: earn coins, buy slimes, purchase upgrades, paint cells
+- Note specific painted cell positions and colors
 - Call save_game()
 - Close and reopen project
 - Call load_game()
@@ -671,7 +684,9 @@ Each phase builds on the previous and results in a testable increment.
   - Coins match saved amount
   - Slime count matches
   - Upgrade levels match
-  - Current painting loaded with correct progress
+  - Current painting loaded with previously painted cells visible
+  - Painted cells are at correct positions with correct colors
+  - Unpainted cells remain white
 
 ---
 

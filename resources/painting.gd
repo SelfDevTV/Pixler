@@ -25,17 +25,20 @@ func _load_image() -> Image:
 func create_cells() -> Array[Cell]:
     var img = _load_image()
     var cells: Array[Cell] = []
+    cells.resize(grid_size.x * grid_size.y)
 
     if img == null:
         push_error("Cannot create cells: Image failed to load for painting: " + painting_name)
         return cells
-
-    for x in range(img.get_width()):
-        for y in range(img.get_height()):
+    var width = img.get_width()
+    var height = img.get_height()
+    for y in range(height):
+        for x in range(width):
+            var index = y * width + x
             var col = img.get_pixel(x, y)
             var cell = Cell.new()
             cell.color = col
             cell.position = Vector2i(x, y)
-            cells.push_back(cell)
+            cells[index] = cell
     return cells
     

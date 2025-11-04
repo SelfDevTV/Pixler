@@ -119,8 +119,8 @@ Each phase builds on the previous and results in a testable increment.
 - Array of Cell data (cells: Array[Cell])
 - Grid dimensions (grid_size: Vector2i)
 - Methods: load_painting(painting: Painting), get_cell_at(pos: Vector2i), is_cell_painted(pos: Vector2i)
-- Method: get_unpainted_cells() -> Array[Vector2i]
-- Method: get_painted_cells() -> Array[Vector2i] (for save system)
+- Method: get_unpainted_cell_positions() -> Array[Vector2i]
+- Method: get_painted_cell_positions() -> Array[Vector2i] (for save system)
 - Method: restore_painted_cells(positions: Array[Vector2i]) (for load system)
 - Signal: cell_painted(position: Vector2i, color: Color)
 - Signal: painting_complete()
@@ -137,9 +137,9 @@ Each phase builds on the previous and results in a testable increment.
 - Create manual test scene
 - Get GridManager singleton reference
 - Load test painting
-- Call get_unpainted_cells() and verify returns all positions
+- Call get_unpainted_cell_positions() and verify returns all positions
 - Mark a few cells as painted manually
-- Call get_unpainted_cells() again, verify count decreased
+- Call get_unpainted_cell_positions() again, verify count decreased
 
 ---
 
@@ -293,7 +293,7 @@ Each phase builds on the previous and results in a testable increment.
 - Process: Transition to SelectTarget after short delay
 
 **SelectTarget State:**
-- Enter: Query GridManager for unpainted cells
+- Enter: Query GridManager.get_unpainted_cell_positions() for unpainted cells
 - Process: Choose target (random or nearest), convert cell position to world position, transition to Moving
 
 **Moving State:**
@@ -664,7 +664,7 @@ Each phase builds on the previous and results in a testable increment.
 3. Implement save_game():
    - Create SaveData instance
    - Populate from EconomyManager, UpgradeManager, GalleryManager, etc.
-   - Get painted cells from GridManager for current painting
+   - Get painted cell positions from GridManager.get_painted_cell_positions()
    - Store in painting_progress Dictionary with current_painting_name as key
    - Use ResourceSaver.save()
 4. Implement load_game():

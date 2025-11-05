@@ -25,7 +25,6 @@ var pan_start_offset: Vector2
 
 # Zoom
 const ZOOM_LEVELS = [
-    Vector2(0.25, 0.25),
     Vector2(0.5, 0.5),
     Vector2(1.0, 1.0),
     Vector2(2.0, 2.0),
@@ -33,7 +32,7 @@ const ZOOM_LEVELS = [
     Vector2(8.0, 8.0),
     Vector2(16.0, 16.0)
 ]
-var current_zoom_level: int = 6  # Start at 1.0x zoom
+var current_zoom_level: int = 4  # Start at 1.0x zoom
 
 # Smooth interpolation settings
 var smooth_position_speed: float = 5.0
@@ -202,7 +201,7 @@ func zoom_to_show_full_grid() -> void:
         var viewport_size = get_viewport_rect().size
         var zoom_x = viewport_size.x / grid_width
         var zoom_y = viewport_size.y / grid_height
-        var ideal_zoom = min(zoom_x, zoom_y) * 0.9  # 90% to leave some margin
+        var ideal_zoom = min(zoom_x, zoom_y) * 0.1  # 90% to leave some margin
 
         # Find closest zoom level
         var closest_level = 0

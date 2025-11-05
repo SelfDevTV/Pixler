@@ -29,14 +29,15 @@ const ZOOM_LEVELS = [
     Vector2(8.0, 8.0),
     Vector2(16.0, 16.0)
 ]
-var current_zoom_level: int = 2  # Start at 1.0x zoom
+var current_zoom_level: int = 6  # Start at 1.0x zoom
 
 # Smooth interpolation settings
 var smooth_position_speed: float = 5.0
-var smooth_zoom_speed: float = 8.0
+var smooth_zoom_speed: float = 3.0
 
 func _ready() -> void:
     zoom = ZOOM_LEVELS[current_zoom_level]
+    zoom_to_show_full_grid()
 
 func _process(delta: float) -> void:
     # Handle mode-specific behavior

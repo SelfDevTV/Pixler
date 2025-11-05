@@ -9,3 +9,4 @@ func _ready() -> void:
     GridManager.load_painting(painting)
     await get_tree().process_frame
     GridManager.mark_cell_painted(Vector2i(0, 0))
+    

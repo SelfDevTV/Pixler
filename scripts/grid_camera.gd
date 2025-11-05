@@ -1,6 +1,9 @@
 class_name GridCamera
 extends Camera2D
 
+@onready var grid_shader_rect: ColorRect = %GridShaderRect
+
+
 # Camera modes
 enum CameraMode {
     MANUAL,              # User controls (direct, responsive)

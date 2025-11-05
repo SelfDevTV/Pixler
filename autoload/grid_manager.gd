@@ -2,6 +2,7 @@ extends Node
 
 var current_painting_data: Painting
 var cells: Array[Cell]
+var cell_scale := 4
 var painted_count: int = 0
 var grid_size: Vector2i:
     get: return current_painting_data.grid_size if current_painting_data else Vector2i.ZERO
@@ -65,3 +66,6 @@ func restore_painted_cells(positions: Array[Vector2i]):
     painted_count = positions.size()
     for p in positions:
         cells[_pos_to_index(p)].is_painted = true
+        
+func cell_to_world(pos: Vector2i) -> Vector2:
+    return pos * cell_scale

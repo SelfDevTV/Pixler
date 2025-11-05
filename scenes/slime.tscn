@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://bcv285lotcjmh"]
+[gd_scene load_steps=8 format=3 uid="uid://bcv285lotcjmh"]
 
 [ext_resource type="Script" uid="uid://cbjmbya7gh336" path="res://scripts/slime/slime.gd" id="1_371uh"]
 [ext_resource type="Script" uid="uid://des2bk55iq2tx" path="res://scripts/slime/state_machine.gd" id="2_p2gj0"]
 [ext_resource type="Script" uid="uid://dxhlt7oh5dmlk" path="res://scripts/slime/state_idle.gd" id="3_n6pvg"]
 [ext_resource type="Script" uid="uid://b7c1rjvfpyk1c" path="res://scripts/slime/state_select_target.gd" id="4_pjw23"]
+[ext_resource type="Script" uid="uid://ch3uhj57spy5n" path="res://scripts/state_move.gd" id="5_2npkn"]
+[ext_resource type="Script" uid="uid://n16cgw13dyly" path="res://scripts/state_painting.gd" id="6_fd6lc"]
+[ext_resource type="Texture2D" uid="uid://4q335xxs2p" path="res://icon.svg" id="7_gstla"]
 
 [node name="Slime" type="Node2D"]
 script = ExtResource("1_371uh")
@@ -17,10 +20,27 @@ initial_state = NodePath("Idle")
 script = ExtResource("3_n6pvg")
 state_select_target = NodePath("../SelectTarget")
 
-[node name="Timer" type="Timer" parent="SM/Idle"]
+[node name="IdleTimer" type="Timer" parent="SM/Idle"]
 one_shot = true
 
-[node name="SelectTarget" type="Node" parent="SM"]
+[node name="SelectTarget" type="Node" parent="SM" node_paths=PackedStringArray("idle_state", "moving_state")]
 script = ExtResource("4_pjw23")
+idle_state = NodePath("../Idle")
+moving_state = NodePath("../Move")
 
-[connection signal="timeout" from="SM/Idle/Timer" to="SM/Idle" method="_on_timer_timeout"]
+[node name="Move" type="Node" parent="SM" node_paths=PackedStringArray("painting_state")]
+script = ExtResource("5_2npkn")
+painting_state = NodePath("../Painting")
+
+[node name="Painting" type="Node" parent="SM"]
+script = ExtResource("6_fd6lc")
+
+[node name="PaintTimer" type="Timer" parent="SM/Painting"]
+one_shot = true
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("7_gstla")
+
+[connection signal="timeout" from="SM/Idle/IdleTimer" to="SM/Idle" method="_on_timer_timeout"]
+[connection signal="timeout" from="SM/Painting/PaintTimer" to="SM/Painting" method="_on_paint_timer_timeout"]

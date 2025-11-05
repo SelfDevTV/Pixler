@@ -31,11 +31,7 @@ func _process(delta: float) -> void:
             shader_material.set_shader_parameter("camera_offset", camera_offset)
         
     
-func _cell_to_world(cell_pos: Vector2i) -> Vector2:
-    return Vector2(cell_pos.x * cell_scale, cell_pos.y * cell_scale)
-    
-func _world_to_cell(world_pos: Vector2) -> Vector2i:
-    return Vector2i(floor(world_pos.x / cell_scale), floor(world_pos.y / cell_scale))
+
     
 func _on_cell_painted(pos: Vector2i, color: Color):
     # Update the pixel in the image texture to show the painted cell

@@ -1,16 +1,18 @@
 extends State
 
-@onready var timer: Timer = $Timer
+@onready var idle_timer: Timer = $IdleTimer
+
 
 
 @export var state_select_target: State
 
 func enter() -> void:
+    
     print("state entered - idle")
-    timer.start()
+    idle_timer.start()
     
 func exit() -> void:
-    timer.stop()
+    idle_timer.stop()
 
 
 func _on_timer_timeout() -> void:

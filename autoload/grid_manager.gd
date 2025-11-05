@@ -67,5 +67,12 @@ func restore_painted_cells(positions: Array[Vector2i]):
     for p in positions:
         cells[_pos_to_index(p)].is_painted = true
         
+func world_to_cell(pos: Vector2) -> Vector2i:
+    var uncentered_pos = pos + Vector2(grid_size * cell_scale) * 0.5
+    var cell_pos: Vector2 = uncentered_pos / cell_scale
+    return Vector2i(cell_pos.floor())
+        
 func cell_to_world(pos: Vector2i) -> Vector2:
-    return pos * cell_scale
+    var world = pos * cell_scale
+    return Vector2(world.x - grid_size.x * cell_scale / 2.0, world.y - grid_size.y * cell_scale / 2.0)
+ 

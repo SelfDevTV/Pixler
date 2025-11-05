@@ -4,6 +4,7 @@ extends Camera2D
 @onready var grid_shader_rect: ColorRect = %GridShaderRect
 
 
+
 # Camera modes
 enum CameraMode {
     MANUAL,              # User controls (direct, responsive)
@@ -51,6 +52,9 @@ func _process(delta: float) -> void:
             handle_following(delta)
         CameraMode.MOVING_TO_POSITION:
             handle_moving_to_position(delta)
+
+    # Update shader parameters for grid rendering
+    update_shader_parameters()
 
 func handle_manual_controls(delta: float) -> void:
     # Discrete zoom with zoom-to-cursor
@@ -216,3 +220,43 @@ func zoom_to_show_full_grid() -> void:
         target_position = Vector2.ZERO
         target_zoom_level = 1  # 0.5x zoom
         mode = CameraMode.MOVING_TO_POSITION
+
+func update_shader_parameters() -> void:
+    """Update the grid shader with current camera position and zoom"""
+    if not grid_shader_rect:
+        return
+
+    var shader_material = grid_shader_rect.material as ShaderMaterial
+    if not shader_material:
+        return
+
+    # Calculate the world position that corresponds to the top-left of the viewport
+    # Formula: world_pos = screen_pos / zoom + camera_offset
+    # Solving for camera_offset: camera_offset = camera_world_center - viewport_center / zoom
+    var viewport_center = get_viewport_rect().size / 2.0
+    var camera_world_center = get_screen_center_position()
+    var camera_offset = camera_world_center - viewport_center / zoom
+
+    # Calculate grid origin offset (for centered sprite)
+    # If the sprite is centered, cell (0,0) is not at world (0,0)
+    
+    # FIXME: needs a rework in final version, getting parent is bad
+    var grid_renderer = get_parent()
+    var grid_origin_offset = Vector2.ZERO
+
+    if grid_renderer:
+        var grid_size = GridManager.grid_size
+        var cell_size = grid_renderer.cell_scale
+
+        # Check if sprite is centered
+        var sprite = grid_renderer.get_node_or_null("Sprite2D")
+        if sprite and sprite.get("centered"):
+            # If centered, the top-left corner is at negative half dimensions
+            var grid_dimensions = Vector2(grid_size.x * cell_size, grid_size.y * cell_size)
+            grid_origin_offset = -grid_dimensions / 2.0
+
+    # Pass parameters to shader
+    shader_material.set_shader_parameter("camera_offset", camera_offset)
+    shader_material.set_shader_parameter("camera_zoom", zoom)
+    shader_material.set_shader_parameter("grid_origin_offset", grid_origin_offset)
+   

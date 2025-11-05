@@ -8,9 +8,11 @@
 shader = ExtResource("2_shader")
 shader_parameter/cell_size = 4.0
 shader_parameter/camera_offset = Vector2(0, 0)
+shader_parameter/camera_zoom = Vector2(1, 1)
 shader_parameter/line_width = 1.0
 shader_parameter/grid_color = Color(0, 0, 0, 1)
 shader_parameter/grid_size = Vector2(32, 32)
+shader_parameter/grid_origin_offset = Vector2(0, 0)
 
 [node name="GridRenderer" type="Node2D"]
 script = ExtResource("1_diptf")

@@ -1,6 +1,26 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcv285lotcjmh"]
+[gd_scene load_steps=5 format=3 uid="uid://bcv285lotcjmh"]
 
 [ext_resource type="Script" uid="uid://cbjmbya7gh336" path="res://scripts/slime/slime.gd" id="1_371uh"]
+[ext_resource type="Script" uid="uid://des2bk55iq2tx" path="res://scripts/slime/state_machine.gd" id="2_p2gj0"]
+[ext_resource type="Script" uid="uid://dxhlt7oh5dmlk" path="res://scripts/slime/state_idle.gd" id="3_n6pvg"]
+[ext_resource type="Script" uid="uid://b7c1rjvfpyk1c" path="res://scripts/slime/state_select_target.gd" id="4_pjw23"]
 
 [node name="Slime" type="Node2D"]
 script = ExtResource("1_371uh")
+
+[node name="SM" type="Node" parent="." node_paths=PackedStringArray("slime", "initial_state")]
+script = ExtResource("2_p2gj0")
+slime = NodePath("..")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="SM" node_paths=PackedStringArray("state_select_target")]
+script = ExtResource("3_n6pvg")
+state_select_target = NodePath("../SelectTarget")
+
+[node name="Timer" type="Timer" parent="SM/Idle"]
+one_shot = true
+
+[node name="SelectTarget" type="Node" parent="SM"]
+script = ExtResource("4_pjw23")
+
+[connection signal="timeout" from="SM/Idle/Timer" to="SM/Idle" method="_on_timer_timeout"]

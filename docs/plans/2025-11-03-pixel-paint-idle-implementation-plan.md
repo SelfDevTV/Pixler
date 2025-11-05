@@ -4,7 +4,7 @@
 
 **Goal:** Build an MVP idle game where autonomous slime workers paint pixel art grids, revealing hidden images while earning coins for progression.
 
-**Architecture:** Scene-based Godot structure with autoloaded singletons for game state, economy, and save/load. Grid system manages cell data and rendering. Slime AI uses state machine pattern. Signal-based communication between systems. Painting resources use Texture2D for better editor integration and resource management.
+**Architecture:** Scene-based Godot structure with autoloaded singletons for game state, economy, and save/load. Grid system manages cell data and rendering. Slime AI uses node-based state machine pattern with dedicated StateMachine node and State children for visual debugging and readability. Signal-based communication between systems. Painting resources use Texture2D for better editor integration and resource management.
 
 **Tech Stack:** Godot 4.x, GDScript, Image texture manipulation for grid rendering, State Machine for slime AI, ResourceSaver/ResourceLoader for persistence.
 
@@ -299,12 +299,13 @@ Each phase builds on the previous and results in a testable increment.
 
 ---
 
-### Task 2.2: Slime State Machine States
+### Task 2.2: Slime State Machine States (Node-Based)
 
-**Goal:** Define states for slime AI
+**Goal:** Define node-based states for slime AI
 
 **Files to Create:**
-- `res://scripts/slime/slime_state.gd` (base state class)
+- `res://scripts/slime/state.gd` (base state class extending Node)
+- `res://scripts/slime/state_machine.gd` (state machine controller)
 - `res://scripts/slime/state_idle.gd`
 - `res://scripts/slime/state_select_target.gd`
 - `res://scripts/slime/state_moving.gd`
@@ -312,99 +313,204 @@ Each phase builds on the previous and results in a testable increment.
 - `res://scripts/slime/state_returning.gd`
 - `res://scripts/slime/state_refilling.gd`
 
-**What Each State Needs:**
+**What the Base State Needs (state.gd):**
+- Extends Node
+- @export var state_name: String (for debugging in inspector)
+- Reference to parent slime (set by StateMachine)
+- Virtual methods: enter(), exit(), update(delta: float), physics_update(delta: float)
+- Signal: transitioned(to_state_name: String) - emitted when ready to change state
+- Can override _ready(), _process(), _physics_process() for node-based features
 
-**Base State:**
-- Virtual methods: enter(), exit(), process(delta), physics_process(delta)
-- Reference to parent slime
-- Method to transition to another state
+**What the StateMachine Needs (state_machine.gd):**
+- Extends Node
+- @export var initial_state: NodePath (select in inspector)
+- Property: current_state (State node)
+- Reference to parent slime (get_parent())
+- Method: change_state(new_state_name: String) - validates and transitions
+- Dictionary: valid_transitions for safety (optional but recommended)
+- In _ready(): set initial state, connect signals from all child State nodes
+- Method: _on_state_transitioned(to_state_name: String) - handles transition logic
 
 **Idle State:**
-- Enter: Wait briefly
-- Process: Transition to SelectTarget after short delay
+- Add Timer node as child for idle delay
+- Enter: Start timer (1 second)
+- On timer timeout: emit transitioned("SelectTarget")
+- Clean and readable - no manual delta tracking!
 
 **SelectTarget State:**
-- Enter: Query GridManager.get_unpainted_cell_positions() for unpainted cells
-- Process: Choose target (random or nearest), convert cell position to world position, transition to Moving
+- Enter: Query GridManager.get_unpainted_cell_positions()
+- Enter: Choose target (random or nearest), set slime.target
+- Enter: Immediately emit transitioned("Moving") or transitioned("Idle") if no targets
+- Single-frame state - very simple logic
 
 **Moving State:**
-- Enter: Set navigation target
-- Process: Move toward target, transition to Painting when arrived
+- Enter: Store target position
+- Process: Check distance to target using _process(delta)
+- Process: When arrived, emit transitioned("Painting")
+- Can add animation or visual feedback easily
 
 **Painting State:**
-- Enter: Start paint animation
-- Process: Drain tank over time, fill cell color progressively
-- Exit: Mark cell as painted in GridManager, emit signal, add coins
+- Add Timer node as child for paint duration
+- Enter: Start paint timer based on slime.paint_speed
+- Process: Update visual paint progress (shader, animation, etc.)
+- Process: Drain slime tank proportionally
+- On timer timeout: Call GridManager.mark_cell_painted(), emit transitioned("Returning" or "SelectTarget")
+- Exit: Check if tank empty, transition accordingly
 
 **Returning State:**
-- Enter: Set navigation target to base
-- Process: Move toward base, transition to Refilling when arrived
+- Enter: Set slime.target to base position
+- Process: Move toward base, check distance
+- Process: When arrived at base, emit transitioned("Refilling")
 
 **Refilling State:**
-- Enter: Start refill animation
-- Process: Fill tank over time
-- Exit: Transition to Idle when full
+- Add Timer node as child for refill animation
+- Enter: Start refill timer
+- Process: Fill tank progressively over time
+- Process: Update visual feedback (tank fill animation)
+- On timer timeout: emit transitioned("Idle")
 
 **Steps:**
-1. Create base SlimeState class
-2. Create each state subclass
-3. Implement state logic (transitions handled in next task)
-4. Don't implement actual movement/painting yet (placeholder logic)
+1. Create base State class extending Node
+2. Create StateMachine class extending Node
+3. Create each state subclass with Timer nodes where needed
+4. Implement state logic using node features (timers, signals)
+5. States emit `transitioned` signal instead of calling change_state directly
+6. StateMachine handles all transition logic centrally
 
 **Testing Approach:**
-- Create test scene with state instances
-- Manually call enter/exit/process methods
-- Verify state logic flows correctly
-- Test transitions between states
+- Create test scene with Slime node
+- Add StateMachine node as child with all State nodes as children
+- Set initial_state in inspector to Idle
+- Run scene and observe state transitions in debugger
+- Inspector shows current state clearly in scene tree (highlighted node)
+- Can pause and inspect state properties in real-time
+- Verify state flow: Idle → SelectTarget → Moving → Painting → Returning → Refilling → Idle
+
+**Architecture Benefits:**
+- ✅ **Readability**: Each state is a visible node in scene tree
+- ✅ **Debugging**: Current state highlighted in editor during runtime
+- ✅ **Timer Nodes**: No manual delta tracking, cleaner code
+- ✅ **Isolation**: States can't directly transition (emit signal instead)
+- ✅ **Extensibility**: Easy to add AnimationPlayer, AudioStreamPlayer per state
 
 ---
 
-### Task 2.3: Slime Scene and State Machine
+### Task 2.3: Slime Scene and State Machine Integration
 
-**Goal:** Slime entity with AI state machine
+**Goal:** Slime entity with node-based AI state machine
 
 **Files to Create:**
-- `res://scenes/slime.tscn`
-- `res://scripts/slime.gd`
+- `res://scenes/slime.tscn` (scene file)
+- `res://scripts/slime.gd` (main slime script)
 
-**What the Slime Scene Needs:**
-- CharacterBody2D or Node2D as root
-- Sprite2D or AnimatedSprite2D for visual (placeholder colored circle)
-- Script with state machine logic
-- Properties: current_state, tank_capacity, current_tank, move_speed, paint_speed
-- Properties: target_position (Vector2), current_cell (Vector2i)
-- Method: change_state(new_state: SlimeState)
-- Reference to base position (Vector2)
-- Method to convert cell grid position to world position for navigation
+**Scene Hierarchy:**
+```
+Slime (CharacterBody2D) [slime.gd]
+├── Sprite2D (placeholder colored circle)
+└── StateMachine (Node) [state_machine.gd]
+    ├── Idle (Node) [state_idle.gd]
+    │   └── Timer (for idle delay)
+    ├── SelectTarget (Node) [state_select_target.gd]
+    ├── Moving (Node) [state_moving.gd]
+    ├── Painting (Node) [state_painting.gd]
+    │   └── Timer (for paint duration)
+    ├── Returning (Node) [state_returning.gd]
+    └── Refilling (Node) [state_refilling.gd]
+        └── Timer (for refill duration)
+```
 
-**What the Script Needs:**
-- Initialize all states in _ready()
-- Set initial state to Idle
-- In _process(delta), call current_state.process(delta)
-- In _physics_process(delta), call current_state.physics_process(delta)
-- Implement movement logic (move toward target_position)
-- Implement tank management (drain during paint, refill at base)
+**What the Slime Script Needs (slime.gd):**
+- Extends CharacterBody2D
+- @export properties for balancing:
+  - base_move_speed: float = 100.0
+  - base_paint_speed: float = 2.0 (seconds per cell)
+  - base_tank_capacity: float = 10.0 (cells paintable)
+  - base_refill_speed: float = 3.0 (seconds to refill)
+- Runtime properties:
+  - current_tank: float (current paint remaining)
+  - target: Vector2 (current movement target)
+  - base_position: Vector2 (refill station location)
+  - current_cell: Vector2i (cell being painted)
+- Methods:
+  - move_toward_target(delta: float) - called by Moving/Returning states
+  - get_distance_to(pos: Vector2) -> float - helper for states
+  - drain_tank(amount: float) - called by Painting state
+  - fill_tank(amount: float) - called by Refilling state
+- No state management logic! That's all in StateMachine node
+
+**What the StateMachine Script Needs (state_machine.gd):**
+- Extends Node
+- @export var initial_state: NodePath (set in inspector to point to Idle node)
+- Property: current_state: State (reference to current active state node)
+- Property: slime: Slime (get_parent() as Slime)
+- In _ready():
+  - Get all child State nodes and store in dictionary by name
+  - Connect each state's `transitioned` signal to _on_state_transitioned()
+  - Set slime reference on all state nodes
+  - Call change_state() with initial_state
+- Method: change_state(state_name: String):
+  - Call current_state.exit() if exists
+  - Find state node by name from children
+  - Set as current_state
+  - Call current_state.enter()
+  - Print state change for debugging (optional)
+- Method: _on_state_transitioned(to_state_name: String):
+  - Called when any state emits transitioned signal
+  - Validates transition (optional)
+  - Calls change_state(to_state_name)
+- In _process(delta):
+  - Call current_state.update(delta) if state implements it
+- In _physics_process(delta):
+  - Call current_state.physics_update(delta) if state implements it
 
 **Steps:**
-1. Create slime scene with CharacterBody2D root
-2. Add colored circle sprite (placeholder - use ColorRect or simple sprite)
-3. Create slime.gd script
-4. Implement state machine framework
-5. Instantiate all state objects
-6. Implement movement using velocity/delta
-7. Test: Instance slime in test scene, verify state transitions
+1. Create slime.tscn with CharacterBody2D root
+2. Add Sprite2D child with colored circle placeholder
+3. Attach slime.gd script to root, define all properties and methods
+4. Add StateMachine node as child with state_machine.gd script
+5. Add all 6 state nodes as children of StateMachine
+6. Add Timer nodes to states that need them (Idle, Painting, Refilling)
+7. Attach state scripts to each state node
+8. In inspector, set StateMachine's initial_state to Idle node path
+9. Implement slime movement logic using CharacterBody2D.velocity
+10. Test: Instance slime and verify full cycle works
+
+**Implementation Notes:**
+- **Slime.gd** handles physics and data (tank, movement, position)
+- **StateMachine.gd** handles coordination and transitions
+- **State scripts** handle decision logic and timing
+- States access slime via `slime` property (set by StateMachine)
+- Example state access: `slime.drain_tank(0.1)` or `slime.target = cell_pos`
 
 **Testing Approach:**
-- Create test scene with GridRenderer and one Slime
-- Set base position manually
-- Run scene and observe slime behavior:
-  - Should go to Idle
-  - Should select target cell
-  - Should move toward it
-  - Should "paint" (placeholder)
-  - Should return to base when tank empty
-  - Should refill
-  - Should repeat cycle
+- Create test scene with:
+  - GridRenderer (for painted cells)
+  - BaseStation at position (100, 100)
+  - One Slime instance with base_position set to (100, 100)
+- Load a small test painting (10x10)
+- Run scene and observe:
+  - ✅ Slime starts in Idle state (visible in scene tree)
+  - ✅ Transitions to SelectTarget after 1 second
+  - ✅ Picks random unpainted cell and transitions to Moving
+  - ✅ Moves toward target cell smoothly
+  - ✅ Reaches cell and transitions to Painting
+  - ✅ Painting timer runs, tank drains, cell colors appear
+  - ✅ When tank low, transitions to Returning
+  - ✅ Moves back to base position
+  - ✅ Reaches base and transitions to Refilling
+  - ✅ Refilling timer runs, tank fills up
+  - ✅ When full, transitions back to Idle
+  - ✅ Cycle repeats indefinitely
+- During runtime, pause and inspect:
+  - Current state highlighted in scene tree
+  - Slime.current_tank value updating
+  - State timer values in inspector
+
+**Debugging Tips:**
+- Add `print("Entered: ", state_name)` in each state's enter() for console tracking
+- Watch Remote Scene Tree in debugger to see current state
+- Set breakpoints in state transition signals
+- Use Godot's debugger to step through state changes
 
 ---
 
@@ -1366,7 +1472,18 @@ Main (Node2D)
 │   └── Camera2D
 ├── BaseStation (Node2D)
 ├── Slimes (Node2D container)
-│   └── Slime instances
+│   └── Slime (CharacterBody2D)
+│       ├── Sprite2D
+│       └── StateMachine (Node)
+│           ├── Idle (State)
+│           │   └── Timer
+│           ├── SelectTarget (State)
+│           ├── Moving (State)
+│           ├── Painting (State)
+│           │   └── Timer
+│           ├── Returning (State)
+│           └── Refilling (State)
+│               └── Timer
 └── UI (CanvasLayer)
     ├── HUD
     ├── ShopMenu
@@ -1388,12 +1505,62 @@ Should load in this order (affects dependencies):
 7. TutorialManager
 8. AudioManager
 
+### Node-Based State Machine Best Practices
+
+**Architecture:**
+- StateMachine node manages all transitions and state lifecycle
+- State nodes are children of StateMachine (visible in scene tree)
+- States emit `transitioned(state_name)` signal, never call transitions directly
+- Slime owns data (tank, position, speed), StateMachine owns behavior flow
+
+**Benefits:**
+- **Visual Debugging**: Current state highlighted in remote scene tree during gameplay
+- **Inspector Access**: Pause game and inspect state properties, timer values in real-time
+- **Readability**: Scene hierarchy shows all possible states at a glance
+- **Timer Nodes**: Use Timer.timeout signal instead of manual delta tracking
+- **Modularity**: Each state can have AnimationPlayer, AudioStreamPlayer, etc.
+
+**Pattern:**
+```gdscript
+# Base State (state.gd)
+extends Node
+signal transitioned(to_state_name: String)
+var slime: Slime  # Set by StateMachine
+
+func enter() -> void:
+    pass  # Override in subclasses
+
+func exit() -> void:
+    pass  # Override in subclasses
+
+func update(delta: float) -> void:
+    pass  # Called from StateMachine._process()
+
+# Example State (state_idle.gd)
+extends State
+
+@onready var timer: Timer = $Timer
+
+func enter() -> void:
+    timer.start(1.0)
+
+func _on_timer_timeout() -> void:
+    transitioned.emit("SelectTarget")
+```
+
+**Debugging:**
+- Use `print("[%s] Entered" % state_name)` in each state's enter() method
+- Watch Remote → Remote Scene Tree in Godot debugger
+- Set breakpoints in StateMachine._on_state_transitioned()
+- Export state_name on each State for inspector visibility
+
 ### Signals Best Practices
 
 - Use signals for cross-system communication (not direct references)
 - Emit signals AFTER state changes (not before)
 - Keep signal parameter count low (1-3 parameters max)
 - Document what each signal means in comments
+- States emit `transitioned` signal instead of directly calling state changes
 
 ### Performance Considerations
 

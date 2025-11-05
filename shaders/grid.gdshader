@@ -46,7 +46,7 @@ void fragment() {
 	float alpha = 1.0 - min(line / line_width, 1.0);
 
 	// Hide grid line if cell is painted (alpha > threshold)
-	if (cell_color.a > 0.1) {
+	if (cell_color.rgba  != vec4(1, 1, 1, 1)) {
 		alpha = 0.0;
 	}
 

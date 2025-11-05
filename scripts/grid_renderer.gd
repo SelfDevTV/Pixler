@@ -46,7 +46,7 @@ func _on_cell_painted(pos: Vector2i, color: Color):
     
 func _on_painting_loaded(_painting: Painting):
     image = Image.create_empty(GridManager.grid_size.x, GridManager.grid_size.y, false, Image.FORMAT_RGBA8)
-    image.fill(Color.TRANSPARENT)
+    image.fill(Color.WHITE)
     for p in GridManager.get_painted_cell_positions():
             var c = GridManager.get_cell_at(p)
             image.set_pixelv(c.position, c.color)

@@ -610,7 +610,120 @@ Slime (CharacterBody2D) [slime.gd]
 - Verify all slimes are working independently
 - Try purchasing with insufficient coins - verify fails
 
-**Commit Point:** Core gameplay working - slimes paint and earn coins
+---
+
+### Task 2.7: Slime Movement Visualization (Debug MVP)
+
+**Goal:** Add debug visualization for slime movement paths and improve positioning
+
+**Files to Modify:**
+- `res://scripts/slime/state_select_target.gd`
+- `res://scripts/slime/state_move.gd`
+- `res://scripts/slime/state_painting.gd`
+- `res://scenes/slime.tscn`
+- `res://scripts/slime.gd`
+
+**What This Task Adds:**
+
+1. **Offset Positioning:**
+   - Slime stops BEFORE the target cell (not on top of it)
+   - Cell remains visible during painting
+   - Fixed offset approach: position slime bottom-left of cell
+   - Offset: `Vector2(-8, 8)` or similar (configurable)
+
+2. **Path Visualization (Debug):**
+   - Line2D node showing path from slime to target
+   - Simple dotted line effect (using Line2D texture or width property)
+   - Toggle on/off with debug key (F3 or D key)
+   - Only visible when debug mode enabled
+
+**Scene Changes:**
+- Add Line2D node as child of Slime
+- Configure Line2D: width = 2, default_color = Color.YELLOW with transparency
+- For dotted effect: Set Line2D texture or use custom shader (optional for MVP)
+
+**Script Changes:**
+
+**In slime.gd:**
+- Add property: `@export var cell_offset: Vector2 = Vector2(-8, 8)`
+- Add property: `debug_draw_path: bool = false`
+- Add method: `set_debug_draw(enabled: bool)` to toggle Line2D visibility
+- In `_input()`: Listen for F3/D key to toggle `debug_draw_path`
+
+**In state_select_target.gd:**
+- When setting target cell, apply offset:
+  ```gdscript
+  var cell_world_pos = GridManager.cell_to_world(target_cell)
+  slime.next_target = cell_world_pos + slime.cell_offset
+  ```
+- This ensures slime positions beside/below cell instead of directly on it
+
+**In state_move.gd:**
+- In enter(): Set Line2D points if debug enabled
+  ```gdscript
+  if slime.debug_draw_path:
+      slime.path_line.points = [Vector2.ZERO, slime.next_target - slime.global_position]
+  ```
+- In update(): Update line start point as slime moves (optional - creates "trailing" effect)
+- Alternative: Keep static line from selection point to target
+
+**In state_painting.gd:**
+- In enter(): Hide/clear Line2D
+  ```gdscript
+  slime.path_line.visible = false
+  ```
+
+**Steps:**
+1. Add Line2D node to slime.tscn scene as child of root
+2. Configure Line2D properties in inspector (width, color, default_color alpha ~0.7)
+3. Add cell_offset and debug properties to slime.gd
+4. Implement debug toggle input handling (F3 key)
+5. Modify SelectTarget state to apply offset when calculating target position
+6. Modify Move state to draw/update line when debug enabled
+7. Modify Painting state to hide line
+8. Test: Toggle debug mode, verify line appears/disappears, verify slime positions correctly
+
+**Implementation Notes:**
+- **Line2D coordinates are relative to parent** (the Slime node), so use local positions
+- Point[0] = Vector2.ZERO (slime's position)
+- Point[1] = next_target position relative to slime (target - slime.global_position)
+- For dotted effect: Simple approach is to set Line2D width to 2-3 and use antialiased property
+- Advanced dotted: Use Line2D texture property with repeating dot pattern
+
+**Testing Approach:**
+- Run game with slimes active
+- Press F3 to enable debug visualization
+- Verify:
+  - Yellow line appears from slime to target cell
+  - Line updates/disappears as slime moves
+  - Line hidden when slime reaches target and starts painting
+  - Slime positions to the side/bottom of cell (not obscuring it)
+  - Cell being painted is clearly visible
+  - Can see cell color reveal without slime blocking view
+- Press F3 again to disable
+- Verify lines disappear but slime positioning remains offset
+- Test with multiple slimes - each has its own line
+
+**Why Offset Positioning Matters:**
+- Player can see the cell being painted (UX improvement)
+- Creates visual separation between worker and work
+- Makes slime feel like it's "working on" the cell, not "standing on" it
+- Critical for seeing color reveals and particle effects
+
+**Why Debug-Only for MVP:**
+- Avoid visual clutter with multiple slimes
+- Test usefulness before committing to polished feature
+- Easy to toggle during development
+- Can be upgraded to full feature in post-MVP if players like it
+
+**Future Enhancement Ideas (Post-MVP):**
+- Animated "marching ants" dotted line (shader with time offset)
+- Only show line for selected/hovered slime
+- Make it a purchasable upgrade: "Slime Planner - See what slimes are thinking!"
+- Color-code lines by slime or target cell color
+- Show predicted path for multiple targets ahead
+
+**Commit Point:** Core gameplay working - slimes paint and earn coins, with debug visualization
 
 ---
 

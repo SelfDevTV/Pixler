@@ -1,6 +1,7 @@
 extends State
 
 @onready var paint_timer: Timer = $PaintTimer
+@export var idle_state: State
 
 
 func enter() -> void:
@@ -17,6 +18,7 @@ func _on_paint_timer_timeout() -> void:
     paint_timer.stop()
     var cell = GridManager.world_to_cell(slime.next_target)
     GridManager.mark_cell_painted(cell)
+    change_state_requested.emit(idle_state)
     
 func update(delta: float) -> void:
     slime.progress_bar.value = paint_timer.wait_time - paint_timer.time_left

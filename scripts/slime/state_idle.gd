@@ -2,13 +2,13 @@ extends State
 
 @onready var idle_timer: Timer = $IdleTimer
 
-
+@export var idle_time: float = 1.5
 
 @export var state_select_target: State
 
 func enter() -> void:
     
-    print("state entered - idle")
+    idle_timer.wait_time = idle_time
     idle_timer.start()
     
 func exit() -> void:

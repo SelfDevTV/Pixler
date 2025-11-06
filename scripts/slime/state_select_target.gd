@@ -11,5 +11,6 @@ func enter() -> void:
         slime.next_target = cell_pos_world
         change_state_requested.emit(moving_state)
     else:
+        print("no target?")
         change_state_requested.emit(idle_state)
     

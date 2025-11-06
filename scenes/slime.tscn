@@ -8,6 +8,9 @@
 [ext_resource type="Script" uid="uid://n16cgw13dyly" path="res://scripts/state_painting.gd" id="6_fd6lc"]
 [ext_resource type="Texture2D" uid="uid://4q335xxs2p" path="res://icon.svg" id="7_gstla"]
 
+[sub_resource type="Animation" id="Animation_v5wyi"]
+length = 0.001
+
 [sub_resource type="Animation" id="Animation_gstla"]
 resource_name = "paint"
 length = 0.2
@@ -25,9 +28,6 @@ tracks/0/keys = {
 "values": [0.0, -0.7853981633974483, 0.0, 0.7853981633974483, 0.0]
 }
 
-[sub_resource type="Animation" id="Animation_v5wyi"]
-length = 0.001
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0l8pv"]
 _data = {
 &"RESET": SubResource("Animation_v5wyi"),
@@ -42,6 +42,8 @@ bg_color = Color(0.99462265, 0.20474225, 0.7475628, 1)
 
 [node name="Slime" type="Node2D"]
 script = ExtResource("1_371uh")
+move_speed = 500.0
+paint_speed = 0.1
 
 [node name="SM" type="Node" parent="." node_paths=PackedStringArray("slime", "initial_state")]
 script = ExtResource("2_p2gj0")
@@ -50,6 +52,7 @@ initial_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="SM" node_paths=PackedStringArray("state_select_target")]
 script = ExtResource("3_n6pvg")
+idle_time = 0.1
 state_select_target = NodePath("../SelectTarget")
 
 [node name="IdleTimer" type="Timer" parent="SM/Idle"]
@@ -64,8 +67,9 @@ moving_state = NodePath("../Move")
 script = ExtResource("5_2npkn")
 painting_state = NodePath("../Painting")
 
-[node name="Painting" type="Node" parent="SM"]
+[node name="Painting" type="Node" parent="SM" node_paths=PackedStringArray("idle_state")]
 script = ExtResource("6_fd6lc")
+idle_state = NodePath("../Idle")
 
 [node name="PaintTimer" type="Timer" parent="SM/Painting"]
 one_shot = true

@@ -19,6 +19,7 @@ script = ExtResource("1_diptf")
 
 [node name="GridShaderRect" type="ColorRect" parent="."]
 unique_name_in_owner = true
+visible = false
 material = SubResource("ShaderMaterial_grid")
 offset_left = -2048.0
 offset_top = -2048.0

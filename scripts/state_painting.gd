@@ -15,10 +15,10 @@ func enter() -> void:
 func _on_paint_timer_timeout() -> void:
     slime.animation_player.stop()
     paint_timer.stop()
+    var cell = GridManager.world_to_cell(slime.next_target)
+    GridManager.mark_cell_painted(cell)
     
 func update(delta: float) -> void:
     slime.progress_bar.value = paint_timer.wait_time - paint_timer.time_left
-    print(paint_timer.time_left)
-    print("test")
 
     

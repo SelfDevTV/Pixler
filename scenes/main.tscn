@@ -12,12 +12,3 @@ painting = ExtResource("2_0wfyh")
 [node name="GridRenderer" parent="." instance=ExtResource("3_sugp2")]
 
 [node name="Hud" parent="." instance=ExtResource("4_jyhfs")]
-
-[node name="Button" type="Button" parent="Hud"]
-offset_left = 57.0
-offset_top = 75.0
-offset_right = 163.0
-offset_bottom = 106.0
-text = "Spawn Slime"
-
-[connection signal="pressed" from="Hud/Button" to="." method="_on_button_pressed"]

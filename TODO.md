@@ -59,28 +59,28 @@
 
 ### Task 4.1: HUD Scene (Basic UI)
 
-- [ ] Create `res://scenes/ui/hud.tscn` with CanvasLayer root
-- [ ] Create `res://scripts/ui/hud.gd`
-- [ ] Add Labels:
+- [x] Create `res://scenes/ui/hud.tscn` with CanvasLayer root
+- [x] Create `res://scripts/ui/hud.gd`
+- [x] Add Labels:
   - Coin count (top-left)
   - Painting progress "X/Y cells" (top-center)
   - Slime count (top-right)
   - Painting name (top-center above progress)
-- [ ] Connect to signals:
+- [x] Connect to signals:
   - `EconomyManager.coins_changed`
   - `GridManager.cell_painted`
   - `SlimeManager.slime_purchased`
-- [ ] Add to `main.tscn`
-- [ ] **Test:** Verify HUD updates in real-time
+- [x] Add to `main.tscn`
+- [x] **Test:** Verify HUD updates in real-time
 
 ### Task 4.2: Buy Slime Button
 
-- [ ] Add Button to HUD (bottom-right)
-- [ ] Set text: "Buy Slime (X coins)"
-- [ ] Connect to `SlimeManager.purchase_slime()` on press
-- [ ] Listen to `EconomyManager.coins_changed` to enable/disable
-- [ ] Update cost label when `slime_purchased` signal emits
-- [ ] **Test:** Buy slimes, verify button cost updates and disables when can't afford
+- [x] Add Button to HUD (bottom-right)
+- [x] Set text: "Buy Slime (X coins)"
+- [x] Connect to `SlimeManager.purchase_slime()` on press
+- [x] Listen to `EconomyManager.coins_changed` to enable/disable
+- [x] Update cost label when `slime_purchased` signal emits
+- [x] **Test:** Buy slimes, verify button cost updates and disables when can't afford
 
 ### Task 2.7: Movement Visualization (Optional Debug)
 

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://155xx7s6y6ta"]
+[gd_scene load_steps=5 format=3 uid="uid://155xx7s6y6ta"]
 
 [ext_resource type="Script" uid="uid://cii5hxk58i6ok" path="res://scripts/main.gd" id="1_o5qli"]
 [ext_resource type="Resource" uid="uid://bivda0maurrt2" path="res://resources/test_painting.tres" id="2_0wfyh"]
 [ext_resource type="PackedScene" uid="uid://dgrbxcjbovofd" path="res://scenes/grid_renderer.tscn" id="3_sugp2"]
+[ext_resource type="PackedScene" uid="uid://cxm7r2h1iidrd" path="res://scenes/ui/hud.tscn" id="4_jyhfs"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_o5qli")
@@ -10,11 +11,13 @@ painting = ExtResource("2_0wfyh")
 
 [node name="GridRenderer" parent="." instance=ExtResource("3_sugp2")]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Hud" parent="." instance=ExtResource("4_jyhfs")]
 
-[node name="Button" type="Button" parent="CanvasLayer"]
-offset_right = 106.0
-offset_bottom = 31.0
+[node name="Button" type="Button" parent="Hud"]
+offset_left = 57.0
+offset_top = 75.0
+offset_right = 163.0
+offset_bottom = 106.0
 text = "Spawn Slime"
 
-[connection signal="pressed" from="CanvasLayer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Hud/Button" to="." method="_on_button_pressed"]

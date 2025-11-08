@@ -10,6 +10,7 @@ var grid_size: Vector2i:
 signal cell_painted(position: Vector2i, color: Color)
 signal painting_loaded(painting: Painting)
 signal painting_complete
+
    
     
 func _pos_to_index(pos: Vector2i) -> int:
@@ -20,6 +21,7 @@ func load_painting(painting: Painting, painted_cells: Array[Vector2i] = []):
     cells = current_painting_data.create_cells()
     restore_painted_cells(painted_cells)
     painting_loaded.emit(painting)
+    
 
 func get_cell_at(pos: Vector2i) -> Cell:
     var cell = cells[_pos_to_index(pos)]

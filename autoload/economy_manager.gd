@@ -1,6 +1,6 @@
 extends Node
 
-var coins := 10
+var coins := 30
 signal coins_changed(new_amount: int)
 
 var game_config: GameConfig = preload("uid://dcn48iv5kshjj")

@@ -41,3 +41,8 @@ func _on_slime_purchased(_slime: Slime):
 
 func _on_buy_slime_btn_pressed() -> void:
     SlimeManager.purchase_slime()
+    
+
+
+func _on_temp_buy_upgrade_btn_pressed() -> void:
+    UpgradeManager.purchase_upgrade(UpgradeManager.UPGRADE_TYPE.MOVE_SPEED)

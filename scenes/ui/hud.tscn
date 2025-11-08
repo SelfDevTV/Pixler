@@ -66,4 +66,9 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Buy Slime (X coins)"
 
+[node name="TempBuyUpgradeBtn" type="Button" parent="Control/MarginContainer/VBoxContainer/Bot"]
+layout_mode = 2
+text = "Buy Upgrade"
+
 [connection signal="pressed" from="Control/MarginContainer/VBoxContainer/Bot/BuySlimeBtn" to="." method="_on_buy_slime_btn_pressed"]
+[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/Bot/TempBuyUpgradeBtn" to="." method="_on_temp_buy_upgrade_btn_pressed"]

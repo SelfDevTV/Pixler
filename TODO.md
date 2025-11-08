@@ -124,14 +124,14 @@
 - [x] Preloaded default upgrades (move_speed, paint_speed)
 - [x] **Test:** Purchase upgrades, verify levels increase
 
-### Task 3.2: Apply Upgrades to Slimes
+### Task 3.2: Apply Upgrades to Slimes ✅
 
-- [ ] Add method `calculate_stats()` to `slime.gd`
-- [ ] In `_ready()`, query UpgradeManager for current levels
-- [ ] Apply multipliers: `base_move_speed * upgrade_multiplier`
-- [ ] Connect to `UpgradeManager.upgrade_purchased` signal
-- [ ] Call `calculate_stats()` when upgrades purchased
-- [ ] **Test:** Purchase upgrade, verify existing slimes get faster
+- [x] Add method `calculate_stats()` to `slime.gd`
+- [x] In `_ready()`, query UpgradeManager for current levels
+- [x] Apply multipliers: `base_move_speed * upgrade_multiplier`
+- [x] Connect to `UpgradeManager.upgrade_purchased` signal
+- [x] Call `calculate_stats()` when upgrades purchased
+- [x] **Test:** Purchase upgrade, verify existing slimes get faster
 
 ### Task 4.3: Shop Menu Scene
 
@@ -297,7 +297,7 @@
 
 **Current Blockers:**
 
-- None! Ready to implement Task 3.2
+- None! Task 3.2 complete, ready for Task 4.3
 
 **Performance Targets:**
 
@@ -309,8 +309,8 @@
 
 ## 🎯 Next Action
 
-**Task 3.2: Apply Upgrades to Slimes**
+**Task 4.3: Shop Menu Scene**
 
-Connect the upgrade system to actual slime behavior! Add `calculate_stats()` method to slimes that reads from UpgradeManager and applies speed multipliers. This will make upgrades actually affect gameplay.
+Create a functional shop UI where players can view and purchase upgrades! Build a panel overlay with upgrade buttons that show level, cost, and effects. Connect to UpgradeManager for purchasing logic.
 
 Good luck! 🎮

@@ -133,6 +133,18 @@
 - [x] Call `calculate_stats()` when upgrades purchased
 - [x] **Test:** Purchase upgrade, verify existing slimes get faster
 
+### Task 3.2.1: Organic Painting Algorithm ✅
+
+- [x] Implement frontier-based target selection in `slime.gd`
+- [x] Add `TargetSelectionMode` enum (RANDOM, ORGANIC)
+- [x] Add frontier tracking (`Dictionary[Vector2i, bool]`)
+- [x] Implement `_get_organic_target()` method with neighbor expansion
+- [x] Update `state_select_target.gd` to use `slime.get_next_target()`
+- [x] Fix `has_cell_at()` bounds checking in GridManager
+  - Added proper X/Y coordinate validation (0 <= pos < grid_size)
+  - Fixed off-by-one error (>= 0 instead of > 0)
+- [x] **Test:** Verify slimes paint in organic spreading patterns without out-of-bounds errors
+
 ### Task 4.3: Shop Menu Scene
 
 - [ ] Create `res://scenes/ui/shop_menu.tscn` (Panel overlay)

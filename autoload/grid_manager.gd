@@ -22,6 +22,11 @@ func load_painting(painting: Painting, painted_cells: Array[Vector2i] = []):
     restore_painted_cells(painted_cells)
     painting_loaded.emit(painting)
     
+func has_cell_at(pos: Vector2i) -> bool:
+    if (pos.x < 0 or pos.x >= grid_size.x) or (pos.y < 0 or pos.y >= grid_size.y):
+        return false
+    var idx = _pos_to_index(pos)
+    return idx >= 0 and idx < cells.size()
 
 func get_cell_at(pos: Vector2i) -> Cell:
     var cell = cells[_pos_to_index(pos)]

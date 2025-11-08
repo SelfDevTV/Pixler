@@ -42,8 +42,6 @@ bg_color = Color(0.99462265, 0.20474225, 0.7475628, 1)
 
 [node name="Slime" type="Node2D"]
 script = ExtResource("1_371uh")
-move_speed = 500.0
-paint_speed = 0.1
 
 [node name="SM" type="Node" parent="." node_paths=PackedStringArray("slime", "initial_state")]
 script = ExtResource("2_p2gj0")
@@ -75,7 +73,7 @@ idle_state = NodePath("../Idle")
 one_shot = true
 
 [node name="Sprite" type="Sprite2D" parent="."]
-scale = Vector2(0.1, 0.1)
+scale = Vector2(0.05, 0.05)
 texture = ExtResource("7_gstla")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

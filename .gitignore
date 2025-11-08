@@ -3,3 +3,6 @@
 .claude/
 /android/
 resources/test_painting.tres
+
+# Skip-worktree files (not tracked for local changes):
+# - resources/test_painting.tres

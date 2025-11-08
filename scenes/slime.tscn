@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://des2bk55iq2tx" path="res://scripts/slime/state_machine.gd" id="2_p2gj0"]
 [ext_resource type="Script" uid="uid://dxhlt7oh5dmlk" path="res://scripts/slime/state_idle.gd" id="3_n6pvg"]
 [ext_resource type="Script" uid="uid://b7c1rjvfpyk1c" path="res://scripts/slime/state_select_target.gd" id="4_pjw23"]
-[ext_resource type="Script" uid="uid://ch3uhj57spy5n" path="res://scripts/state_move.gd" id="5_2npkn"]
-[ext_resource type="Script" uid="uid://n16cgw13dyly" path="res://scripts/state_painting.gd" id="6_fd6lc"]
+[ext_resource type="Script" uid="uid://ch3uhj57spy5n" path="res://scripts/slime/state_move.gd" id="5_2npkn"]
+[ext_resource type="Script" uid="uid://n16cgw13dyly" path="res://scripts/slime/state_painting.gd" id="6_fd6lc"]
 [ext_resource type="Texture2D" uid="uid://4q335xxs2p" path="res://icon.svg" id="7_gstla"]
 
 [sub_resource type="Animation" id="Animation_v5wyi"]

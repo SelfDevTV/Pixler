@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GameConfig" load_steps=2 format=3 uid="uid://dcn48iv5kshjj"]
 
-[ext_resource type="Script" uid="uid://dwfdeg2yd32u3" path="res://scripts/game_config.gd" id="1_bw22i"]
+[ext_resource type="Script" uid="uid://dwfdeg2yd32u3" path="res://scripts/resource/game_config.gd" id="1_bw22i"]
 
 [resource]
 script = ExtResource("1_bw22i")

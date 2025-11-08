@@ -1,7 +1,7 @@
 # Pixel Paint Idle Game - TODO
 
-> **Last Updated:** 2025-11-06
-> **Project Status:** ~25% Complete (Phase 1 Done, Phase 2 ~60% Done)
+> **Last Updated:** 2025-11-08
+> **Project Status:** ~30% Complete (Phase 1 Done, Phase 2 Complete, Sprint 2 Started)
 > **Full Plan:** [docs/plans/2025-11-03-pixel-paint-idle-implementation-plan.md](docs/plans/2025-11-03-pixel-paint-idle-implementation-plan.md)
 
 ---
@@ -107,22 +107,22 @@
 
 **Goal:** Give players meaningful choices and progression
 
-### Task 3.1: Upgrade System
+### Task 3.1: Upgrade System ✅
 
-- [ ] Create `res://resources/upgrade.gd` (extends Resource)
+- [x] Create `res://resources/upgrade.gd` (extends Resource)
   - Properties: upgrade_name, description, upgrade_type (enum)
-  - Properties: base_cost, current_level, max_level
-  - Method: `get_cost_for_next_level() -> int` (exponential)
+  - Properties: base_cost, max_level (current_level moved to UpgradeManager)
+  - Method: `get_cost_for_level(current_level: int) -> int` (exponential)
   - Method: `get_effect_at_level(level: int) -> float`
-- [ ] Create `res://autoload/upgrade_manager.gd` singleton
-- [ ] Add to project autoload settings
-- [ ] Define upgrade types enum: MOVE_SPEED, PAINT_SPEED
-- [ ] Implement `purchase_upgrade(type: enum) -> bool`
-- [ ] Implement `get_upgrade_level(type: enum) -> int`
-- [ ] Implement `get_upgrade_multiplier(type: enum) -> float`
-- [ ] Add Signal: `upgrade_purchased(type: enum, new_level: int)`
-- [ ] Initialize default upgrades in `_ready()`
-- [ ] **Test:** Purchase upgrades, verify levels increase
+- [x] Create `res://autoload/upgrade_manager.gd` singleton
+- [x] Add to project autoload settings
+- [x] Define upgrade types enum: MOVE_SPEED, PAINT_SPEED
+- [x] Implement `purchase_upgrade(type: enum) -> bool`
+- [x] Implement `get_upgrade_level(type: enum) -> int`
+- [x] Implement `get_upgrade_effect(type: enum) -> float`
+- [x] Add Signal: `upgrade_purchased(type: enum, new_level: int)`
+- [x] Preloaded default upgrades (move_speed, paint_speed)
+- [x] **Test:** Purchase upgrades, verify levels increase
 
 ### Task 3.2: Apply Upgrades to Slimes
 
@@ -297,7 +297,7 @@
 
 **Current Blockers:**
 
-- None! Ready to implement Task 2.6
+- None! Ready to implement Task 3.2
 
 **Performance Targets:**
 
@@ -309,8 +309,8 @@
 
 ## 🎯 Next Action
 
-**Start with Task 2.6: Slime Purchase System**
+**Task 3.2: Apply Upgrades to Slimes**
 
-Create the SlimeManager singleton to enable buying multiple slimes. This unlocks the core idle game loop where more slimes = faster painting = more coins = buy more slimes.
+Connect the upgrade system to actual slime behavior! Add `calculate_stats()` method to slimes that reads from UpgradeManager and applies speed multipliers. This will make upgrades actually affect gameplay.
 
 Good luck! 🎮

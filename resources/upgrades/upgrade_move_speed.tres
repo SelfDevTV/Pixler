@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Upgrade" load_steps=2 format=3 uid="uid://dcs3gdfbhrine"]
+
+[ext_resource type="Script" uid="uid://camlnvewtacc3" path="res://scripts/resource/upgrade.gd" id="1_her6t"]
+
+[resource]
+script = ExtResource("1_her6t")
+upgrade_name = "Move speed"
+base_effect = 100.0
+effect_per_level = 50.0
+metadata/_custom_type_script = "uid://camlnvewtacc3"

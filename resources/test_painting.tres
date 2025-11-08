@@ -1,11 +1,10 @@
 [gd_resource type="Resource" script_class="Painting" load_steps=3 format=3 uid="uid://bivda0maurrt2"]
 
-[ext_resource type="Script" uid="uid://dm61c7jyjq0m6" path="res://scripts/painting.gd" id="1_1l2fi"]
-[ext_resource type="Texture2D" uid="uid://dcumbrg6cc6e" path="res://assets/images/133845052279408518.jpg" id="1_cnx28"]
+[ext_resource type="Texture2D" uid="uid://cjeco4rborclr" path="res://assets/images/Test.png" id="1_cnx28"]
+[ext_resource type="Script" uid="uid://dm61c7jyjq0m6" path="res://scripts/painting.gd" id="2_oqvox"]
 
 [resource]
-script = ExtResource("1_1l2fi")
+script = ExtResource("2_oqvox")
 painting_name = "Test"
 image_texture = ExtResource("1_cnx28")
-shrink_factor = 20.0
 metadata/_custom_type_script = "uid://dm61c7jyjq0m6"

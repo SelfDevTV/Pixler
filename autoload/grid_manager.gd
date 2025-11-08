@@ -37,7 +37,10 @@ func get_current_painting() -> Painting:
     return current_painting_data
         
 func has_unpainted_cells() -> bool:
-    return cells.any(func(c: Cell): return not c.is_painted)
+    return cells.any(func(c: Cell): return not c.is_painted and has_cell_color(c))
+    
+func has_cell_color(cell: Cell) -> bool:
+    return cell.color.a > 0.0
     
 func mark_cell_painted(position: Vector2i):
     painted_count += 1
@@ -52,10 +55,18 @@ func is_cell_painted(pos: Vector2i) -> bool:
 
 func get_unpainted_cell_positions() -> Array[Vector2i]:
     var positions: Array[Vector2i] = []
-    for cell in cells:
+    var colored_cells = get_colored_cells()
+    for cell in colored_cells:
         if not cell.is_painted:
             positions.append(cell.position)
     return positions
+    
+func get_colored_cells() -> Array[Cell]:
+    var colored_cells: Array[Cell] = []
+    for cell in cells:
+        if cell.color.a > 0.0:
+            colored_cells.append(cell)
+    return colored_cells
     
 func get_painted_cell_positions() -> Array[Vector2i]:
     var positions: Array[Vector2i] = []

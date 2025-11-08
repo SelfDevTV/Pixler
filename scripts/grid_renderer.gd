@@ -46,6 +46,9 @@ func _on_painting_loaded(_painting: Painting):
     for p in GridManager.get_painted_cell_positions():
             var c = GridManager.get_cell_at(p)
             image.set_pixelv(c.position, c.color)
+    for p in GridManager.cells:
+        if p.color.a == 0.0:
+            image.set_pixelv(p.position, Color.TRANSPARENT)
             
     image_texture = ImageTexture.create_from_image(image)
     sprite_2d.texture = image_texture

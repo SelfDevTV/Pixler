@@ -19,7 +19,7 @@ func _on_paint_timer_timeout() -> void:
     GridManager.mark_cell_painted(cell)
     change_state_requested.emit(idle_state)
     
-func update(delta: float) -> void:
+func update(_delta: float) -> void:
     slime.progress_bar.value = paint_timer.wait_time - paint_timer.time_left
 
     

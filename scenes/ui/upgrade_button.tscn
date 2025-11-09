@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3 uid="uid://dr6tycmvk6r1d"]
+
+[ext_resource type="Script" uid="uid://d2o3ryls7u0io" path="res://scripts/ui/upgrade_button.gd" id="1_tii4b"]
+
+[node name="UpgradeButton" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 80)
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_tii4b")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="UpgradeDetailsLbl" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "MOVE SPEED [Lvl 3/10]"
+
+[node name="CostLbl" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "80 Coins"
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="EffectLbl" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "250 -> 300 (+50)"
+
+[node name="UpgradeBtn" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Buy"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer2/UpgradeBtn" to="." method="_upgrade_pressed"]

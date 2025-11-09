@@ -7,5 +7,6 @@ script = ExtResource("1_ok01b")
 upgrade_name = "paint_speed"
 description = "speed of painting"
 upgrade_type = 1
-effect_per_level = 0.5
+base_effect = 3.1
+effect_per_level = -0.3
 metadata/_custom_type_script = "uid://camlnvewtacc3"

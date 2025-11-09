@@ -5,6 +5,9 @@ extends CanvasLayer
 @onready var painting_progress: ProgressBar = %PaintingProgress
 @onready var painting_name: Label = %PaintingName
 @onready var buy_slime_btn: Button = %BuySlimeBtn
+@onready var open_shop_btn: Button = %OpenShopBtn
+
+@export var shop_menu: ShopMenu
 
 func _ready() -> void:
     GridManager.painting_loaded.connect(setup)
@@ -44,5 +47,6 @@ func _on_buy_slime_btn_pressed() -> void:
     
 
 
-func _on_temp_buy_upgrade_btn_pressed() -> void:
-    UpgradeManager.purchase_upgrade(UpgradeManager.UPGRADE_TYPE.MOVE_SPEED)
+func _on_open_shop_btn_pressed() -> void:
+    if shop_menu:
+        shop_menu.toggle_open()

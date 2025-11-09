@@ -1,0 +1,68 @@
+[gd_scene load_steps=4 format=3 uid="uid://u430jiha2qpp"]
+
+[ext_resource type="Script" uid="uid://2hfedwci7s1r" path="res://scripts/ui/shop_menu.gd" id="1_8w5fe"]
+[ext_resource type="PackedScene" uid="uid://dr6tycmvk6r1d" path="res://scenes/ui/upgrade_button.tscn" id="2_rnndp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rnndp"]
+bg_color = Color(0.41892704, 0.0019120423, 0.69251275, 1)
+
+[node name="ShopMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 2
+script = ExtResource("1_8w5fe")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -346.40417
+offset_top = -168.0
+offset_right = 346.40417
+offset_bottom = 168.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_rnndp")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TotalCoinsLbl" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Total coins: 30"
+horizontal_alignment = 1
+
+[node name="Close" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "X"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="UpgradeButton" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_rnndp")]
+layout_mode = 2
+
+[node name="UpgradeButton2" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/VBoxContainer" instance=ExtResource("2_rnndp")]
+layout_mode = 2
+upgrade_type = 1
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Close" to="." method="_on_close_pressed"]

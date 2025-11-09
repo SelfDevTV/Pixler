@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_her6t")
 upgrade_name = "Move speed"
-base_effect = 100.0
+base_effect = 50.0
 effect_per_level = 50.0
 metadata/_custom_type_script = "uid://camlnvewtacc3"

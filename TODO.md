@@ -1,7 +1,7 @@
 # Pixel Paint Idle Game - TODO
 
-> **Last Updated:** 2025-11-08
-> **Project Status:** ~30% Complete (Phase 1 Done, Phase 2 Complete, Sprint 2 Started)
+> **Last Updated:** 2025-11-09
+> **Project Status:** ~40% Complete (Phase 1 Done, Phase 2 Complete, Sprint 2 Complete)
 > **Full Plan:** [docs/plans/2025-11-03-pixel-paint-idle-implementation-plan.md](docs/plans/2025-11-03-pixel-paint-idle-implementation-plan.md)
 
 ---
@@ -145,23 +145,23 @@
   - Fixed off-by-one error (>= 0 instead of > 0)
 - [x] **Test:** Verify slimes paint in organic spreading patterns without out-of-bounds errors
 
-### Task 4.3: Shop Menu Scene
+### Task 4.3: Shop Menu Scene ✅
 
-- [ ] Create `res://scenes/ui/shop_menu.tscn` (Panel overlay)
-- [ ] Create `res://scripts/ui/shop_menu.gd`
-- [ ] Create `res://scenes/ui/upgrade_button.tscn` (reusable)
-- [ ] Add ScrollContainer with VBoxContainer for upgrades list
-- [ ] Each upgrade button shows: name, description, level, cost, effect
-- [ ] Connect purchase buttons to `UpgradeManager.purchase_upgrade()`
-- [ ] Implement show/hide logic
-- [ ] Add "Shop" button to HUD
-- [ ] **Test:** Open shop, purchase upgrades, verify UI updates
+- [x] Create `res://scenes/ui/shop_menu.tscn` (Panel overlay)
+- [x] Create `res://scripts/ui/shop_menu.gd`
+- [x] Create `res://scenes/ui/upgrade_button.tscn` (reusable)
+- [x] Add ScrollContainer with VBoxContainer for upgrades list
+- [x] Each upgrade button shows: name, description, level, cost, effect
+- [x] Connect purchase buttons to `UpgradeManager.purchase_upgrade()`
+- [x] Implement show/hide logic
+- [x] Add "Shop" button to HUD
+- [x] **Test:** Open shop, purchase upgrades, verify UI updates
 
 **Sprint 2 Success Criteria:**
 
-- [ ] Players can purchase upgrades
-- [ ] Upgrades meaningfully affect gameplay
-- [ ] Shop UI is functional and clear
+- [x] Players can purchase upgrades
+- [x] Upgrades meaningfully affect gameplay
+- [x] Shop UI is functional and clear
 
 ---
 
@@ -308,7 +308,7 @@
 
 **Current Blockers:**
 
-- None! Task 3.2 complete, ready for Task 4.3
+- None! Sprint 2 complete, ready for Sprint 3
 
 **Performance Targets:**
 
@@ -320,8 +320,8 @@
 
 ## 🎯 Next Action
 
-**Task 4.3: Shop Menu Scene**
+**Sprint 3: Persistence & Content**
 
-Create a functional shop UI where players can view and purchase upgrades! Build a panel overlay with upgrade buttons that show level, cost, and effects. Connect to UpgradeManager for purchasing logic.
+Start building the save/load system with Task 3.5! Create a SaveData resource and SaveManager singleton to preserve player progress between sessions. This will enable offline progression and painting switching.
 
 Good luck! 🎮

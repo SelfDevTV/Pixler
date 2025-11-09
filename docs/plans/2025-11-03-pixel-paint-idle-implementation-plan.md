@@ -85,7 +85,6 @@ Each phase builds on the previous and results in a testable increment.
 
 **What This Resource Needs:**
 - Properties: painting_name (String), grid_size (Vector2i), image_texture (Texture2D)
-- Properties: required_tools (Array[String]), unlocks_tool (String)
 - Method to load image from texture and extract color data
 - Method to create Cell array from image
 
@@ -813,31 +812,28 @@ Slime (CharacterBody2D) [slime.gd]
 **What This Singleton Needs:**
 - Array of all painting resources (paintings: Array[Painting])
 - Array of completed painting IDs (completed: Array[String])
-- Array of unlocked tools (tools: Array[String])
 - Method: load_paintings() to populate painting array from resources folder
-- Method: is_painting_available(painting: Painting) -> bool (checks tool requirements)
-- Method: complete_painting(painting: Painting) (marks complete, unlocks tools)
+- Method: is_painting_available(painting: Painting) -> bool (checks sequential unlocking)
+- Method: complete_painting(painting: Painting) (marks complete)
 - Method: get_available_paintings() -> Array[Painting]
 - Signal: painting_unlocked(painting: Painting)
-- Signal: tool_unlocked(tool_name: String)
 
 **Steps:**
 1. Create GalleryManager singleton
 2. Implement painting loading (scan resources folder or hardcode for MVP)
-3. Implement unlock logic (check required_tools against owned tools)
-4. Implement completion logic (add to completed, unlock tool if defined)
+3. Implement sequential unlock logic (painting N requires painting N-1 to be complete)
+4. Implement completion logic (add to completed)
 5. Add to autoload
-6. Test: Load paintings, check availability, complete painting, verify tool unlocks
+6. Test: Load paintings, check availability, complete painting, verify next unlocks
 
 **Testing Approach:**
-- Create 3 test painting resources:
-  - Painting A: no requirements, unlocks "hammer"
-  - Painting B: requires "hammer"
-  - Painting C: requires "drill"
+- Create 3 test painting resources (Painting 1, 2, 3)
 - Load paintings in GalleryManager
-- Verify Painting A is available, B and C are not
-- Complete Painting A
-- Verify "hammer" unlocked and Painting B now available
+- Verify only Painting 1 is available initially
+- Complete Painting 1
+- Verify Painting 2 is now available
+- Complete Painting 2
+- Verify Painting 3 is now available
 
 ---
 
@@ -890,7 +886,7 @@ Slime (CharacterBody2D) [slime.gd]
 
 **What SaveData Resource Needs:**
 - Properties: coins (int), slime_count (int), upgrade_levels (Dictionary)
-- Properties: owned_tools (Array[String]), completed_paintings (Array[String])
+- Properties: completed_paintings (Array[String])
 - Properties: current_painting_name (String)
 - Properties: painting_progress (Dictionary) - maps painting_name (String) to painted_cells (Array[Vector2i])
 - Property: last_save_timestamp (int)
@@ -1058,12 +1054,9 @@ Slime (CharacterBody2D) [slime.gd]
 
 **What the Shop Menu Needs:**
 - Panel container with close button
-- TabContainer with tabs: "Upgrades", "Consumables", "Tools"
+- ScrollContainer with VBoxContainer for upgrades list
 - Initially hidden, shown when menu button pressed
 - Dim background overlay when open
-
-**What Upgrades Tab Needs:**
-- ScrollContainer with VBoxContainer
 - List of upgrade buttons (one per upgrade type)
 - Each shows: name, description, level, cost, effect
 - Purchase button disabled if can't afford
@@ -1079,9 +1072,9 @@ Slime (CharacterBody2D) [slime.gd]
 
 **Steps:**
 1. Create shop_menu scene with Panel root and ColorRect overlay
-2. Add TabContainer with 3 tabs
+2. Add ScrollContainer with VBoxContainer for upgrades
 3. Create upgrade_button reusable scene
-4. In Upgrades tab, instance upgrade_button for each upgrade type
+4. Instance upgrade_button for each upgrade type
 5. Connect each button to purchase logic
 6. Implement show/hide logic
 7. Test: Open shop, purchase upgrades, close shop
@@ -1112,13 +1105,13 @@ Slime (CharacterBody2D) [slime.gd]
 - GridContainer showing painting thumbnails
 - Each thumbnail shows: mini preview, name, status (completed/available/locked)
 - Click thumbnail to see details
-- Details panel: full preview, grid size, requirements, rewards, "Start Painting" button
+- Details panel: full preview, grid size, "Start Painting" button
 
 **What Each Thumbnail Needs:**
 - TextureRect for preview image
 - Label for painting name
 - Visual indicator for status (color-coded border or icon)
-- Locked paintings show lock icon and requirements tooltip
+- Locked paintings show lock icon and tooltip: "Complete [Previous Painting] to unlock"
 
 **Steps:**
 1. Create gallery scene with full-screen panel
@@ -1126,17 +1119,17 @@ Slime (CharacterBody2D) [slime.gd]
 3. In gallery script, populate GridContainer with thumbnails from GalleryManager
 4. Implement click to show details
 5. Implement "Start Painting" button to load painting
-6. Handle locked paintings (tooltip showing requirements)
+6. Handle locked paintings (tooltip showing previous painting requirement)
 7. Test: Open gallery, click paintings, start painting
 
 **Testing Approach:**
 - Open gallery
-- Verify all available paintings shown
+- Verify only first painting is available initially
 - Verify locked paintings grayed out with lock icon
-- Click locked painting, verify shows requirements
+- Click locked painting, verify shows "Complete [Previous Painting] to unlock"
 - Click available painting, verify shows details
 - Click "Start Painting", verify painting loads and gallery closes
-- Complete painting and reopen gallery, verify marked as complete
+- Complete painting and reopen gallery, verify marked as complete and next painting unlocked
 
 ---
 
@@ -1434,9 +1427,7 @@ Slime (CharacterBody2D) [slime.gd]
    - Set painting_name
    - Assign image_texture in inspector (drag and drop PNG)
    - grid_size will auto-calculate from texture dimensions
-   - Set required_tools (empty for first 3, future use)
-   - Set unlocks_tool (empty for MVP)
-4. Register paintings with GalleryManager
+4. Register paintings with GalleryManager (in sequential order)
 5. Test: Load each painting, verify renders correctly
 
 **Testing Approach:**
@@ -1451,23 +1442,11 @@ Slime (CharacterBody2D) [slime.gd]
 
 ## Post-MVP Enhancements (Not Required for MVP)
 
-### Future Task: Tool System
-- Implement special cell types (Ice, Rock)
-- Create tool resources (Ice Hammer, Drill)
-- Modify slime AI to handle special cells
-- Add tool requirements to paintings
-- Add tool unlocking to completion rewards
-
 ### Future Task: Color Specialization
 - Allow slimes to specialize in specific colors
 - Add color analysis to paintings
 - Modify shop to show color-specific slime purchases
 - Update upgrade system for per-color upgrades
-
-### Future Task: Consumables
-- Implement Line Paint item
-- Add consumables tab to shop
-- Create usage interface (click cell/row to activate)
 
 ### Future Task: Advanced Camera
 - Slime double-click to follow

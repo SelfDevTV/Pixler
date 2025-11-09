@@ -150,8 +150,7 @@
 - [ ] Create `res://scenes/ui/shop_menu.tscn` (Panel overlay)
 - [ ] Create `res://scripts/ui/shop_menu.gd`
 - [ ] Create `res://scenes/ui/upgrade_button.tscn` (reusable)
-- [ ] Add TabContainer with tabs: "Upgrades", "Consumables", "Tools"
-- [ ] Add ScrollContainer with upgrade buttons in Upgrades tab
+- [ ] Add ScrollContainer with VBoxContainer for upgrades list
 - [ ] Each upgrade button shows: name, description, level, cost, effect
 - [ ] Connect purchase buttons to `UpgradeManager.purchase_upgrade()`
 - [ ] Implement show/hide logic

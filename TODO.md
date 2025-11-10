@@ -174,7 +174,7 @@
 - [ ] Create `res://resources/save_data.gd` (extends Resource)
   - Properties: coins, slime_count, upgrade_levels (Dictionary)
   - Properties: current_painting_name, painting_progress (Dictionary)
-  - Property: last_save_timestamp (int)
+  - Property: slime_last_positions (Array[Vector2i]) - for continuity on load
 - [ ] Create `res://autoload/save_manager.gd` singleton
 - [ ] Add to project autoload settings
 - [ ] Implement `save_game() -> void`
@@ -187,16 +187,6 @@
 - [ ] Implement `has_save_file() -> bool`
 - [ ] Save file path: `user://save_game.tres`
 - [ ] **Test:** Save, close project, reopen, load, verify state restored
-
-### Task 3.6: Offline Progress Calculation
-
-- [ ] Store `last_save_timestamp` in SaveData
-- [ ] In `save_game()`, store `Time.get_unix_time_from_system()`
-- [ ] In `load_game()`, calculate elapsed time
-- [ ] Cap elapsed at 7200 seconds (2 hours)
-- [ ] Calculate `coins_per_second` based on slimes and upgrades
-- [ ] Call `EconomyManager.add_coins(offline_earnings)`
-- [ ] **Test:** Save, edit timestamp, load, verify offline coins
 
 ### Task 3.3: Gallery Manager
 
@@ -225,9 +215,9 @@
 **Sprint 3 Success Criteria:**
 
 - [ ] Game saves and loads all progress
-- [ ] Offline progress works correctly
 - [ ] Players can switch between paintings
 - [ ] Painting completion is tracked
+- [ ] Slimes resume painting from their last position
 
 ---
 
@@ -274,7 +264,7 @@
 ### After Sprint 3
 
 - [ ] Save/load preserves exact painting progress
-- [ ] Offline progress caps at 2 hours
+- [ ] Slimes resume from their last painted position
 - [ ] Switching paintings clears grid correctly
 - [ ] Painting completion triggers properly
 
@@ -322,6 +312,6 @@
 
 **Sprint 3: Persistence & Content**
 
-Start building the save/load system with Task 3.5! Create a SaveData resource and SaveManager singleton to preserve player progress between sessions. This will enable offline progression and painting switching.
+Start building the save/load system with Task 3.5! Create a SaveData resource and SaveManager singleton to preserve player progress between sessions. This will enable painting switching and slimes resuming from their last painted positions.
 
 Good luck! 🎮

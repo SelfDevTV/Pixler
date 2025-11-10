@@ -18,10 +18,10 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GridManager="*res://autoload/grid_manager.gd"
 EconomyManager="*res://autoload/economy_manager.gd"
-SlimeManager="*res://autoload/slime_manager.gd"
 UpgradeManager="*res://autoload/upgrade_manager.gd"
+GridManager="*res://autoload/grid_manager.gd"
+SlimeManager="*res://autoload/slime_manager.gd"
 
 [display]
 

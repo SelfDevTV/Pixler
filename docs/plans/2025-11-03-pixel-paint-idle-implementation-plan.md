@@ -15,7 +15,7 @@
 This plan is organized into 4 phases:
 1. **Foundation:** Project setup, grid system, basic rendering
 2. **Core Gameplay:** Slimes, AI, painting mechanics, economy
-3. **Progression:** Gallery, paintings, save/load, offline progress
+3. **Progression:** Gallery, paintings, save/load
 4. **Polish:** Tutorial, UI, audio, particles, juice
 
 Each phase builds on the previous and results in a testable increment.
@@ -726,7 +726,7 @@ Slime (CharacterBody2D) [slime.gd]
 
 ---
 
-## Phase 3: Progression (Gallery, Paintings, Persistence)
+## Phase 3: Progression (Gallery, Paintings, Save/Load)
 
 ### Task 3.1: Upgrade System
 
@@ -889,7 +889,7 @@ Slime (CharacterBody2D) [slime.gd]
 - Properties: completed_paintings (Array[String])
 - Properties: current_painting_name (String)
 - Properties: painting_progress (Dictionary) - maps painting_name (String) to painted_cells (Array[Vector2i])
-- Property: last_save_timestamp (int)
+- Property: slime_last_positions (Array[Vector2i]) - last painted cell per slime for continuity
 
 **Notes on painting_progress:**
 - Key: painting_name (String)
@@ -934,40 +934,7 @@ Slime (CharacterBody2D) [slime.gd]
   - Painted cells are at correct positions with correct colors
   - Unpainted cells remain white
 
----
-
-### Task 3.6: Offline Progress Calculation
-
-**Goal:** Earn coins while game closed
-
-**Files to Modify:**
-- `res://autoload/save_manager.gd`
-- `res://autoload/economy_manager.gd`
-
-**What Needs to Happen:**
-- On game load, calculate time elapsed since last save
-- Cap at 2 hours (7200 seconds)
-- Calculate earnings: coins_per_second * elapsed_time
-- Add offline earnings to player coins
-- Display "Welcome back" message with earnings (future UI task)
-
-**Steps:**
-1. In SaveData, store last_save_timestamp (Unix time)
-2. In save_game(), store Time.get_unix_time_from_system()
-3. In load_game(), calculate elapsed = current_time - last_save_timestamp
-4. Cap elapsed at 7200 seconds (2 hours)
-5. Calculate coins_per_second based on slime count and upgrade levels
-6. Call EconomyManager.add_coins(offline_earnings)
-7. Test: Save, manually edit timestamp, load, verify offline coins
-
-**Testing Approach:**
-- Calculate current coins_per_second (e.g., 2 slimes * 1 coin/cell * X cells/second)
-- Save game
-- Manually edit save file timestamp to 1 hour ago
-- Load game
-- Verify coins increased by approximately coins_per_second * 3600
-
-**Commit Point:** Progression systems complete - gallery, saves, offline progress working
+**Commit Point:** Progression systems complete - gallery and save/load working
 
 ---
 
@@ -986,7 +953,6 @@ Slime (CharacterBody2D) [slime.gd]
 - Label for painting progress (top-center) "245/400 cells"
 - Label for slime count (top-right) "5 slimes working"
 - Label for painting name (top-center above progress)
-- Label for offline timer (bottom-right) "1h 45m until cap" (shown when relevant)
 - CanvasLayer as root for UI rendering
 
 **Steps:**
@@ -1494,7 +1460,7 @@ After each phase, verify:
 - [ ] Paintings load from gallery
 - [ ] Painting completion detected
 - [ ] Save/load preserves all state
-- [ ] Offline progress calculates correctly
+- [ ] Slimes resume from last painted position on load
 
 **Phase 4:**
 - [ ] HUD displays accurate information
@@ -1508,11 +1474,11 @@ After each phase, verify:
 
 1. **Multiple slimes targeting same cell:** Last to arrive should find cell already painted and select new target
 2. **Save/load during painting:** Should restore exact painting progress
-3. **Offline progress exceeding cap:** Should cap at 2 hours, not overflow
-4. **Purchasing with exact coin amount:** Should succeed
-5. **Completing painting with no remaining paintings:** Should handle gracefully
-6. **Very large grids (100x100):** Performance should remain acceptable
-7. **All slimes refilling simultaneously:** Should not cause bottleneck
+3. **Purchasing with exact coin amount:** Should succeed
+4. **Completing painting with no remaining paintings:** Should handle gracefully
+5. **Very large grids (100x100):** Performance should remain acceptable
+6. **All slimes refilling simultaneously:** Should not cause bottleneck
+7. **Slimes resuming from saved positions:** Should continue painting organically from last painted cell
 
 ---
 
@@ -1670,11 +1636,10 @@ The MVP is complete when:
 1. **Tutorial works:** New player can complete tutorial without confusion
 2. **Core loop works:** Buy slime → watch paint → earn coins → buy upgrades → repeat
 3. **Progression works:** Complete painting → unlock in gallery → select new painting
-4. **Persistence works:** Save/load restores all progress correctly
-5. **Offline works:** Closing and reopening game awards appropriate offline coins
-6. **Polish works:** Audio, particles, and UI feel satisfying
-7. **Performance acceptable:** 60 FPS with 10 slimes and 50x50 grid
-8. **No critical bugs:** No crashes, softlocks, or progress-blocking issues
+4. **Persistence works:** Save/load restores all progress correctly, slimes resume from last painted positions
+5. **Polish works:** Audio, particles, and UI feel satisfying
+6. **Performance acceptable:** 60 FPS with 10 slimes and 50x50 grid
+7. **No critical bugs:** No crashes, softlocks, or progress-blocking issues
 
 ---
 

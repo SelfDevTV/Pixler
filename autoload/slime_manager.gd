@@ -5,14 +5,18 @@ var slimeScene: PackedScene = preload("uid://bcv285lotcjmh")
 
 signal slime_purchased(slime: Slime)
 
+func add_slime() -> Slime:
+    var slime: Slime = slimeScene.instantiate()
+    add_child(slime)
+    slime.global_position = Vector2.ZERO
+    slimes.append(slime)
+    return slime
+
 func purchase_slime() -> bool:
     var cost = calculate_slime_cost()
     
     if EconomyManager.spend_coins(cost):
-        var slime: Slime = slimeScene.instantiate()
-        add_child(slime)
-        slime.global_position = Vector2.ZERO
-        slimes.append(slime)
+        var slime = add_slime()
         slime_purchased.emit(slime)
         return true
     return false

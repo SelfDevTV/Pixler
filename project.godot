@@ -22,6 +22,7 @@ EconomyManager="*res://autoload/economy_manager.gd"
 UpgradeManager="*res://autoload/upgrade_manager.gd"
 GridManager="*res://autoload/grid_manager.gd"
 SlimeManager="*res://autoload/slime_manager.gd"
+SaveManager="*res://autoload/save_manager.gd"
 
 [display]
 

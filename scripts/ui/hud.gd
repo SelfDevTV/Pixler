@@ -50,3 +50,7 @@ func _on_buy_slime_btn_pressed() -> void:
 func _on_open_shop_btn_pressed() -> void:
     if shop_menu:
         shop_menu.toggle_open()
+
+
+func _on_save_btn_pressed() -> void:
+    SaveManager.save_game()
